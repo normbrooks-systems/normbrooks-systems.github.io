@@ -1,6 +1,6 @@
-###Local LLMs are not Ready for Prime Time
-#Written on Thursday, May 7, 2026
-#By Norm Brooks
+#### Local LLMs are not Ready for Prime Time
+## Written on Thursday, May 7, 2026
+## By Norm Brooks
 
 I read an [article by Yash Patel](https://www.xda-developers.com/real-bottleneck-of-self-hosted-llm-stack-is-not-gpu/) published yesterday evening, singing hosannas about how grand local LLMs are and how they could create massive value for a user, if they were just willing to give the model more context. While I don’t deny that they have uses, the author argued for giving the LLM broad control and integrations in Home Assistant; I find that to be a bit professionally concerning.
 
