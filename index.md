@@ -1,6 +1,6 @@
 I am a systems engineering professional who has delivered multiple career-level accomplishments across manufacturing, logistics, and operational systems. Below is a curated selection of wins, along with selected writings and technical musings.
 
-I am confident my skills will shine through in the writing, though they are not limited to what is presented here. If you believe your organization is facing operational friction, process inefficiencies, or scaling challenges, reaching out [here](mailto:normbrooks-systems@gmail.com) is the most sure way to solve *your* organizational issues.
+I am confident my skills will shine through in the writing, though they are not limited to what is presented here. If you believe your organization is facing operational friction, process inefficiencies, or scaling challenges, reaching out [here](mailto:normbrooks-systems@gmail.com) is the surest way to recruit me to fix *your* organizational issues.
 
 ## Portfolio Summaries
 
