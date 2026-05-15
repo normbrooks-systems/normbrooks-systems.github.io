@@ -1,5 +1,3 @@
-# Norm Brooks
-
 I am a systems engineering professional who has provided multiple paradigm shifts throughout my career. Below is a curated list of my wins, along with any selected writings I may muse upon. I am confident that my skills will shine through in the writing, but my skills are not limited to what is below. Reaching out [here](mailto:normbrooks-systems@gmail.com) is the most sure way to ask if I can help solve *your* organizational issues.
 
 ## Portfolio Summaries
