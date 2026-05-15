@@ -4,7 +4,7 @@ I am a systems engineering professional who has provided multiple paradigm shift
 
 - [Experience with Forensic Inventory Analysis](inventory_writeup)
 - [Lessons Learned from Local LLM Data Extraction](llm_pipeline_writeup)
-- [Indirect Solutions Produce Direct Throughput Enchancements](throughput_writeup)
+- [Indirect Solutions Produce Direct Throughput Enhancements](throughput_writeup)
 - [Encoding a Database in a Spreadsheet to Build a Human Readable Dashboard](pokedex_writeup)
 
 ## Sample Files
