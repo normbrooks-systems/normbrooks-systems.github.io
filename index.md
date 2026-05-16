@@ -11,7 +11,7 @@ I am confident my skills will shine through in the writing, though they are not 
 
 ## Sample Files
 
-- [Download the Sample Spreadsheet Referenced Above](Pokedex_and_Type_Chart_V2.xlsx)
+- [Download the Sample Spreadsheet Referenced Above](files/Pokedex_and_Type_Chart_V2.xlsx)
 
 ## Writing
 
