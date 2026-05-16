@@ -1,6 +1,6 @@
 # Three Nines on Five Million Dollars of Groceries
 
-I was twenty-five when I started running inventory accuracy at a regional distribution center for one of the largest wholesale grocery distributors in the country. Still a younger adult, not a kid, but young enough that the gap between the work and the title was wide. The role was technically "Assistant First Shift Supervisor." What it actually was, most days, was forensic accounting on a warehouse floor.
+I was twenty-five when I started running inventory accuracy at a regional distribution center for one of the largest wholesale grocery distributors in the country. Still a younger adult, not a kid, but young enough that the gap between the work and the title was wide. The role was technically "Assistant First Shift Supervisor." What it actually was, most days, was a collection of roles and one of those roles was forensic accounting on a warehouse floor.
 
 I held the inventory at 99.98% accuracy on about $5 million of stock for about two years. Three nines isn't unheard of in distribution, but it's not common either, and the way I got there isn't the way the textbooks describe it.
 
