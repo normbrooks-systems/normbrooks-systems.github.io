@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ESP32 Weather Station — Norm Brooks</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="post.css" />
+
+<style>
+  /* Page-specific tweaks */
+  .arch-diagram {
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--ink);
+    background: color-mix(in oklab, var(--ink) 4%, var(--bone));
+    border: 1px solid var(--rule);
+    padding: 22px 26px;
+    margin: 12px 0 28px;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .arch-diagram b { color: var(--accent); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-mark">Norm <em>Brooks</em></a>
+    <a href="index.html#projects" class="back">Back to portfolio</a>
+  </div>
+</nav>
+
+<main>
+  <header class="head">
+    <div class="head-tag">
+      <div class="eyebrow">Independent project &middot; Embedded &middot; IoT</div>
+    </div>
+    <h1>A weather station that <em>survives</em> a router reboot.</h1>
+    <p class="lede">
+      A wall-mounted touchscreen station built on an ESP32-S3, federated
+      with an outdoor sensor node and two HVAC controller nodes over MQTT,
+      with Home Assistant as middleware. Designed around the assumption
+      that the network <em>will</em> drop, and the outdoor enclosure
+      <em>will</em> see weather.
+    </p>
+    <dl class="meta">
+      <div><dt>Stack</dt><dd>ESP32-S3, ESPHome, LVGL, MQTT</dd></div>
+      <div><dt>Display</dt><dd>Elecrow CrowPanel 7"</dd></div>
+      <div><dt>Sensors</dt><dd>DHT22, SHT31, BMP280, BH1750</dd></div>
+      <div><dt>HVAC</dt><dd>Midea UART, 2 zones</dd></div>
+    </dl>
+  </header>
+
+  <article class="prose">
+
+    <figure class="fig">
+      <img src="img/weather-day.jpg" alt="Wall-mounted CrowPanel display showing indoor and outdoor conditions, weather forecast, and moon phase" loading="lazy" />
+      <figcaption>Main weather screen — indoor + outdoor temp/humidity, current and forecast conditions, moon phase, barometric pressure. Acrylic sensor bar above the display houses the DHT22 and BH1750.</figcaption>
+    </figure>
+
+    <section>
+      <h2>What it is</h2>
+      <p>
+        A wall-mounted weather and climate control station. The display
+        unit reads indoor temperature, humidity, and ambient light
+        locally; pulls outdoor temperature, humidity, and barometric
+        pressure from an outdoor sensor node over MQTT; and serves a
+        touch UI for two HVAC zones. Home Assistant sits in the middle
+        as automation substrate and message bus. The whole thing is local
+        — no cloud APIs except Open-Meteo and an NTP source for time.
+      </p>
+    </section>
+
+    <section>
+      <h2>Architecture</h2>
+      <div class="arch-diagram">CrowPanel  &lt;—<b>MQTT</b>—&gt;  Home Assistant  &lt;—<b>ESPHome API</b>—&gt;  HVAC Boards (×2)
+                                            &lt;—<b>ESPHome API</b>—&gt;  Outdoor Sensor</div>
+
+      <p>
+        The display unit doesn't talk directly to the HVAC nodes or the
+        outdoor sensor. It publishes commands and subscribes to state on
+        MQTT topics that Home Assistant owns. Home Assistant translates
+        between MQTT and the ESPHome API, where the actuator and sensor
+        nodes live. Decoupling at the message-bus layer means any one of
+        the nodes can drop and come back without the others noticing.
+      </p>
+
+      <h3>MQTT topics</h3>
+      <table>
+        <thead><tr><th>Topic</th><th>Direction</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>home/outdoor/temperature</code></td><td>HA → Panel</td><td>SHT31 outdoor temp</td></tr>
+          <tr><td><code>home/outdoor/humidity</code></td><td>HA → Panel</td><td>SHT31 outdoor humidity</td></tr>
+          <tr><td><code>home/outdoor/barometer</code></td><td>HA → Panel</td><td>BMP280 barometric pressure</td></tr>
+          <tr><td><code>home/hvac/livingroom/state</code></td><td>HA → Panel</td><td>HVAC mode, set temp, fan speed</td></tr>
+          <tr><td><code>home/hvac/livingroom/set</code></td><td>Panel → HA</td><td>Mode/temp/fan/power commands</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>The decisions that mattered</h2>
+
+      <h3>Direct serial to the mini splits, not IR.</h3>
+      <p>
+        The Midea mini splits expose their control protocol over UART.
+        IR works but is one-way — you can fire commands and hope, but
+        you don't get state back. Direct serial gives bidirectional
+        control: the panel knows what the unit is actually doing, not
+        just what was last commanded at it. A voltage divider on the RX
+        line (10K from GPIO 12 to signal, 22K to ground) drops the 5V
+        UART output to the 3.3V the ESP32 can read.
+      </p>
+
+      <h3>Home Assistant as middleware, not just a logger.</h3>
+      <p>
+        Putting HA in the middle costs nothing at runtime and buys
+        scheduling, automation, and multi-device coordination for free.
+        The panel can be replaced or rewritten without touching the
+        HVAC integration, because the contract is MQTT topics, not
+        device APIs.
+      </p>
+
+      <h3>Dual I2C buses for the outdoor sensor station.</h3>
+      <p>
+        The outdoor SHT31 and the indoor-mounted BMP280 run on separate
+        I2C buses (GPIO 6/7 and GPIO 8/9). Sharing a bus across a long
+        cable run to the outdoor enclosure introduced crosstalk that
+        showed up as occasional bad reads. Splitting the buses
+        eliminated the failure mode.
+      </p>
+
+      <h3>The Stevenson screen, after a sensor died in a week.</h3>
+      <p>
+        The original outdoor sensor was a DHT22 in a basic enclosure.
+        It failed from moisture exposure within one week. The
+        replacement is an SHT31 housed in a 3D-printed PETG Stevenson
+        screen — the louvered radiation shield design used in real
+        meteorological stations, shrunk down to fit on the eave. The
+        SHT31 has been running through summer humidity and winter
+        condensation without drift.
+      </p>
+
+      <h3>MQTT with API fallback.</h3>
+      <p>
+        Outdoor data goes stale if the outdoor node drops or MQTT goes
+        quiet. The panel tracks last-update timestamps with a one-hour
+        threshold, and when MQTT data is stale, Open-Meteo API values
+        substitute automatically. The display labels indicate which
+        readings are live and which are substituted, so the user always
+        knows what they're looking at.
+      </p>
+
+      <h3>Zip code as the single user input.</h3>
+      <p>
+        Config screen asks for one thing: a zip code. Geocoding through
+        Zippopotam.us produces lat/lon, which drives weather location
+        and timezone. One input, several downstream resolutions, no
+        config drift across screens.
+      </p>
+    </section>
+
+    <figure class="fig">
+      <img src="img/weather-night.jpg" alt="Climate control screen in dark mode — heat mode, auto fan, actual temp 75.6°F, set temp 74°F, Update HVAC button" loading="lazy" />
+      <figcaption>Climate control screen, night mode. Dark theme triggers automatically via the BH1750 light sensor with hysteresis (3 consecutive readings below threshold). Backlight drops to 30/255. The "Update HVAC" button is explicit — commands send over IR/UART only on press, never on touch-drift.</figcaption>
+    </figure>
+
+    <section>
+      <h2>The UI layer</h2>
+      <p>
+        The interface is LVGL, generated in SquareLine Studio and driven
+        through LovyanGFX on the CrowPanel's RGB parallel display. Five
+        screens: Weather, Weather (Dark), Config, Climate Control, and
+        an Asset preview screen used during development. The dark
+        variant triggers from the BH1750 ambient light sensor and uses
+        red-on-black for low-light readability without destroying dark
+        adaptation.
+      </p>
+      <p>
+        Sensor loop ticks every 5 seconds for indoor reads. Open-Meteo
+        polls every 15 minutes. NTP runs against pool.ntp.org with a
+        fallback to time.nist.gov. Settings — WiFi credentials, zip
+        code, night mode preference — persist to flash.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="quiet">The shape of the build</h2>
+      <p class="closing">
+        Most of the work in this project went into things that don't
+        appear in the screenshots: the Stevenson screen geometry that
+        actually shields the sensor, the voltage divider on the
+        Midea UART line, the dual I2C buses, the stale-data threshold,
+        the hysteresis on the light sensor. Each one is a small piece
+        of operating-environment honesty — an acknowledgment that the
+        DHT22 will see weather, the network will reboot at 3 a.m., and
+        the user wants to know whether the number on the screen is the
+        real one.
+      </p>
+    </section>
+
+  </article>
+
+  <footer class="post-foot">
+    <a href="index.html#projects" class="back">Back to portfolio</a>
+  </footer>
+</main>
+
+</body>
+</html>

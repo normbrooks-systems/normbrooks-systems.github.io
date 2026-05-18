@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pokédex Calculator — Norm Brooks</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bone: #F4EFE5;
+    --ink: #1C1813;
+    --accent: #B83A26;
+    --muted: color-mix(in oklab, var(--ink) 55%, var(--bone));
+    --rule: color-mix(in oklab, var(--ink) 14%, var(--bone));
+    --soft: color-mix(in oklab, var(--ink) 3%, var(--bone));
+    --display: "Instrument Serif", serif;
+    --sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+    --max: 1180px;
+    --gutter: 32px;
+  }
+
+  /* Pokémon type colors (canonical-ish, slightly desaturated to live with the palette) */
+  :root {
+    --t-normal:   #A8A77A;
+    --t-fire:     #EE8130;
+    --t-water:    #6390F0;
+    --t-electric: #E2C32A;
+    --t-grass:    #7AC74C;
+    --t-ice:      #8FCEDA;
+    --t-fighting: #C22E28;
+    --t-poison:   #A33EA1;
+    --t-ground:   #B98A48;
+    --t-flying:   #A98FF3;
+    --t-psychic:  #F95587;
+    --t-bug:      #A6B91A;
+    --t-rock:     #B6A136;
+    --t-ghost:    #735797;
+    --t-dragon:   #6F35FC;
+    --t-dark:     #4F4133;
+    --t-steel:    #8B98A5;
+    --t-fairy:    #D685AD;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { background: var(--bone); }
+  body {
+    background: var(--bone);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: var(--accent); color: var(--bone); }
+  a { color: inherit; text-decoration: none; }
+
+  /* Top nav (matches portfolio) */
+  .nav {
+    position: sticky; top: 0; z-index: 10;
+    background: color-mix(in oklab, var(--bone) 88%, transparent);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    border-bottom: 1px solid var(--rule);
+  }
+  .nav-inner {
+    max-width: var(--max); margin: 0 auto;
+    padding: 14px var(--gutter);
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 13px;
+  }
+  .nav-mark { font-family: var(--display); font-size: 22px; }
+  .nav-mark em { font-style: italic; color: var(--accent); }
+  .back {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .04em;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: color .15s;
+  }
+  .back:hover { color: var(--ink); }
+  .back::before { content: "←"; }
+  .back-fwd {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .04em;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: color .15s;
+  }
+  .back-fwd:hover { color: var(--accent); }
+  .back-fwd::after { content: "→"; transition: transform .2s; }
+  .back-fwd:hover::after { transform: translateX(3px); }
+
+  /* Page frame */
+  main { max-width: var(--max); margin: 0 auto; padding: clamp(48px, 7vw, 88px) var(--gutter); }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .eyebrow::before {
+    content: ""; display: inline-block;
+    width: 18px; height: 1px; background: var(--accent);
+  }
+
+  /* Head */
+  .head {
+    display: grid;
+    grid-template-columns: 1.2fr .8fr;
+    gap: 48px;
+    align-items: end;
+    padding-bottom: 36px;
+    margin-bottom: 48px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .head h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(48px, 6vw, 80px);
+    line-height: 1;
+    letter-spacing: -0.012em;
+    margin: 14px 0 16px;
+  }
+  .head h1 em { font-style: italic; color: var(--accent); }
+  .head .lede {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 48ch;
+    margin: 0;
+    text-wrap: pretty;
+  }
+  .head .meta {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.6;
+  }
+  .head .meta b { color: var(--ink); font-weight: 500; }
+
+  /* Layout */
+  .calc {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  /* ─── Defender input ─── */
+  .panel {
+    border: 1px solid var(--rule);
+    padding: 24px;
+    background: var(--soft);
+  }
+  .panel-h {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .slots {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    margin-bottom: 24px;
+  }
+  .slot {
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .slot label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .slot select {
+    appearance: none;
+    -webkit-appearance: none;
+    font: 500 14px/1.2 var(--sans);
+    color: var(--ink);
+    background: var(--bone);
+    border: 1px solid var(--rule);
+    padding: 11px 28px 11px 12px;
+    border-radius: 0;
+    cursor: pointer;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+      linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+    background-position: calc(100% - 14px) 50%, calc(100% - 9px) 50%;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+  }
+  .slot select:focus { outline: 1px solid var(--accent); outline-offset: -1px; }
+
+  .selected-row {
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    padding: 14px;
+    background: var(--bone);
+    border: 1px solid var(--rule);
+    min-height: 56px;
+  }
+  .selected-row .none {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    letter-spacing: .04em;
+  }
+
+  /* Type chip */
+  .chip {
+    --c: var(--t-normal);
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 6px 11px 6px 9px;
+    color: var(--ink);
+    background: color-mix(in oklab, var(--c) 18%, var(--bone));
+    border: 1px solid color-mix(in oklab, var(--c) 50%, var(--rule));
+    border-radius: 999px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .chip::before {
+    content: ""; display: inline-block;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--c);
+  }
+  .chip-lg {
+    font-size: 12.5px;
+    padding: 9px 14px 9px 11px;
+  }
+  .chip-lg::before { width: 10px; height: 10px; }
+
+  /* Pokémon list */
+  .picker {
+    margin-top: 8px;
+  }
+  .picker-h {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 24px 0 10px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .picker-h .count {
+    font-size: 9.5px; color: color-mix(in oklab, var(--muted) 60%, var(--bone));
+  }
+  .picker-search {
+    width: 100%;
+    font: 400 13px var(--mono);
+    background: var(--bone);
+    border: 1px solid var(--rule);
+    padding: 9px 12px;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .picker-search:focus { outline: 1px solid var(--accent); outline-offset: -1px; }
+  .picker-list {
+    max-height: 280px;
+    overflow-y: auto;
+    border: 1px solid var(--rule);
+    background: var(--bone);
+    scrollbar-width: thin;
+  }
+  .picker-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--rule);
+    cursor: pointer;
+    transition: background .08s;
+  }
+  .picker-row:last-child { border-bottom: 0; }
+  .picker-row:hover { background: var(--soft); }
+  .picker-row.active { background: color-mix(in oklab, var(--accent) 12%, var(--bone)); }
+  .picker-row .name {
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 13.5px;
+  }
+  .picker-row .num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    margin-right: 8px;
+  }
+  .picker-row .types {
+    display: flex; gap: 4px;
+  }
+  .picker-row .types .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+
+  /* ─── Results ─── */
+  .results-h {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--rule);
+  }
+  .results-h h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(32px, 3.6vw, 44px);
+    margin: 0; line-height: 1;
+    letter-spacing: -0.005em;
+  }
+  .results-h h2 em { font-style: italic; color: var(--accent); }
+  .results-h .scope {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: .04em;
+  }
+
+  .tier {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 24px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: baseline;
+  }
+  .tier:last-child { border-bottom: 0; }
+  .tier-label {
+    font-family: var(--display);
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: -0.005em;
+  }
+  .tier-label em { font-style: italic; color: var(--accent); }
+  .tier-label .sub {
+    display: block;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+  .tier-chips {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    min-height: 28px;
+  }
+  .tier-chips .empty {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: color-mix(in oklab, var(--muted) 60%, var(--bone));
+    letter-spacing: .04em;
+  }
+  .tier.dim .tier-label { color: var(--muted); }
+
+  /* ─── Notes / how it works ─── */
+  .footer-note {
+    margin-top: 80px;
+    padding-top: 40px;
+    border-top: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 40px;
+  }
+  .footer-note h3 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 1;
+    margin: 0 0 12px;
+  }
+  .footer-note h3 em { font-style: italic; color: var(--accent); }
+  .footer-note p {
+    font-size: 15.5px;
+    line-height: 1.65;
+    color: color-mix(in oklab, var(--ink) 85%, var(--bone));
+    max-width: 62ch;
+    margin: 0 0 14px;
+    text-wrap: pretty;
+  }
+  .footer-note code {
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 1px 6px;
+    background: var(--soft);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+  }
+
+  /* Responsive */
+  @media (max-width: 880px) {
+    .head, .calc, .footer-note { grid-template-columns: 1fr; gap: 32px; }
+    .head .meta { text-align: left; }
+    .calc { gap: 32px; }
+    .tier { grid-template-columns: 90px 1fr; gap: 14px; }
+    .tier-label { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-mark">Norm <em>Brooks</em></a>
+    <div style="display:flex; gap:24px; align-items:center;">
+      <a href="pokedex-writeup.html" class="back-fwd">Read the writeup</a>
+      <a href="index.html#projects" class="back">Back to portfolio</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <header class="head">
+    <div>
+      <div class="eyebrow">Independent project &middot; Data modeling</div>
+      <h1>Pokédex as a <em>schema</em> exercise.</h1>
+      <p class="lede">
+        A type-matchup calculator built as a study in runtime column dispatch
+        and schema-abstracted named ranges. The Pokédex is the cover story.
+        The engine underneath is the actual project.
+      </p>
+    </div>
+    <div class="meta">
+      <div><b>893</b> entries (full version)</div>
+      <div><b>18</b> types &middot; <span>324 matchups</span></div>
+      <div><b>Sheets</b> &middot; runtime dispatch</div>
+    </div>
+  </header>
+
+  <section class="calc">
+
+    <!-- Defender selector -->
+    <aside class="panel" aria-label="Defender selector">
+      <div class="panel-h">Defender</div>
+
+      <div class="slots">
+        <div class="slot">
+          <label for="type-1">Type 1</label>
+          <select id="type-1"></select>
+        </div>
+        <div class="slot">
+          <label for="type-2">Type 2</label>
+          <select id="type-2"></select>
+        </div>
+      </div>
+
+      <div class="selected-row" id="selected-row" aria-live="polite">
+        <span class="none">No defender selected.</span>
+      </div>
+
+      <div class="picker">
+        <div class="picker-h">
+          <span>Or pick a Pokémon</span>
+          <span class="count" id="picker-count"></span>
+        </div>
+        <input class="picker-search" id="picker-search"
+               placeholder="Search by name…" autocomplete="off" />
+        <div class="picker-list" id="picker-list" role="listbox"></div>
+      </div>
+    </aside>
+
+    <!-- Results -->
+    <section class="results" aria-live="polite">
+      <div class="results-h">
+        <h2>Attacking <em>effectiveness</em></h2>
+        <span class="scope" id="scope">Pick a type or Pokémon</span>
+      </div>
+
+      <div id="tiers">
+        <!-- Tiers populated by JS -->
+      </div>
+    </section>
+  </section>
+
+  <section class="footer-note">
+    <div>
+      <div class="eyebrow">Engine</div>
+    </div>
+    <div>
+      <h3>What's actually <em>interesting</em>.</h3>
+      <p>
+        On its surface this is a damage calculator. Underneath, the question
+        I was poking at was: how do you write a lookup table once, and have
+        every other sheet in the workbook query it by name without knowing
+        anything about its shape?
+      </p>
+      <p>
+        The answer in production is schema-abstracted named ranges and a
+        small dispatch layer that resolves <code>type → column index</code>
+        at query time rather than at write time. Add a 19th type to the chart
+        and nothing downstream has to be rewritten. That same pattern shows up
+        in every analytics tool I've shipped &mdash; the operational dashboards
+        at Innovairre lean on a more elaborate version of it.
+      </p>
+      <p>
+        The full version covers 893 Pokémon and resolves dual-type defenders
+        via product multiplication. This demo runs the same logic over an 18×18
+        type chart and a curated sample list.
+      </p>
+    </div>
+  </section>
+</main>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────
+// TYPE CHART
+// ATTACK[attacker] = { defender: multiplier } for non-1× cells only.
+// Stored sparsely; resolver fills in 1× by default.
+// ─────────────────────────────────────────────────────────────────────────
+const TYPES = ["Normal","Fire","Water","Electric","Grass","Ice","Fighting","Poison","Ground","Flying","Psychic","Bug","Rock","Ghost","Dragon","Dark","Steel","Fairy"];
+
+const ATTACK = {
+  Normal:   { Rock: 0.5, Ghost: 0, Steel: 0.5 },
+  Fire:     { Fire: 0.5, Water: 0.5, Grass: 2, Ice: 2, Bug: 2, Rock: 0.5, Dragon: 0.5, Steel: 2 },
+  Water:    { Fire: 2, Water: 0.5, Grass: 0.5, Ground: 2, Rock: 2, Dragon: 0.5 },
+  Electric: { Water: 2, Electric: 0.5, Grass: 0.5, Ground: 0, Flying: 2, Dragon: 0.5 },
+  Grass:    { Fire: 0.5, Water: 2, Grass: 0.5, Poison: 0.5, Ground: 2, Flying: 0.5, Bug: 0.5, Rock: 2, Dragon: 0.5, Steel: 0.5 },
+  Ice:      { Fire: 0.5, Water: 0.5, Grass: 2, Ice: 0.5, Ground: 2, Flying: 2, Dragon: 2, Steel: 0.5 },
+  Fighting: { Normal: 2, Ice: 2, Poison: 0.5, Flying: 0.5, Psychic: 0.5, Bug: 0.5, Rock: 2, Ghost: 0, Dark: 2, Steel: 2, Fairy: 0.5 },
+  Poison:   { Grass: 2, Poison: 0.5, Ground: 0.5, Rock: 0.5, Ghost: 0.5, Steel: 0, Fairy: 2 },
+  Ground:   { Fire: 2, Electric: 2, Grass: 0.5, Poison: 2, Flying: 0, Bug: 0.5, Rock: 2, Steel: 2 },
+  Flying:   { Electric: 0.5, Grass: 2, Fighting: 2, Bug: 2, Rock: 0.5, Steel: 0.5 },
+  Psychic:  { Fighting: 2, Poison: 2, Psychic: 0.5, Dark: 0, Steel: 0.5 },
+  Bug:      { Fire: 0.5, Grass: 2, Fighting: 0.5, Poison: 0.5, Flying: 0.5, Psychic: 2, Ghost: 0.5, Dark: 2, Steel: 0.5, Fairy: 0.5 },
+  Rock:     { Fire: 2, Ice: 2, Fighting: 0.5, Ground: 0.5, Flying: 2, Bug: 2, Steel: 0.5 },
+  Ghost:    { Normal: 0, Psychic: 2, Ghost: 2, Dark: 0.5 },
+  Dragon:   { Dragon: 2, Steel: 0.5, Fairy: 0 },
+  Dark:     { Fighting: 0.5, Psychic: 2, Ghost: 2, Dark: 0.5, Fairy: 0.5 },
+  Steel:    { Fire: 0.5, Water: 0.5, Electric: 0.5, Ice: 2, Rock: 2, Steel: 0.5, Fairy: 2 },
+  Fairy:    { Fire: 0.5, Fighting: 2, Poison: 0.5, Dragon: 2, Dark: 2, Steel: 0.5 },
+};
+
+// Schema-dispatch resolver. attacker→defender multiplier.
+function effectiveness(attacker, def1, def2) {
+  const row = ATTACK[attacker] || {};
+  const m1 = (row[def1] !== undefined) ? row[def1] : 1;
+  if (!def2 || def2 === def1) return m1;
+  const m2 = (row[def2] !== undefined) ? row[def2] : 1;
+  return m1 * m2;
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// POKÉMON SAMPLE
+// Curated set of well-known species across types and generations.
+// ─────────────────────────────────────────────────────────────────────────
+const POKEMON = [
+  ["025","Pikachu",      ["Electric"]],
+  ["006","Charizard",    ["Fire","Flying"]],
+  ["009","Blastoise",    ["Water"]],
+  ["003","Venusaur",     ["Grass","Poison"]],
+  ["143","Snorlax",      ["Normal"]],
+  ["150","Mewtwo",       ["Psychic"]],
+  ["131","Lapras",       ["Water","Ice"]],
+  ["094","Gengar",       ["Ghost","Poison"]],
+  ["149","Dragonite",    ["Dragon","Flying"]],
+  ["065","Alakazam",     ["Psychic"]],
+  ["068","Machamp",      ["Fighting"]],
+  ["059","Arcanine",     ["Fire"]],
+  ["130","Gyarados",     ["Water","Flying"]],
+  ["134","Vaporeon",     ["Water"]],
+  ["135","Jolteon",      ["Electric"]],
+  ["136","Flareon",      ["Fire"]],
+  ["196","Espeon",       ["Psychic"]],
+  ["197","Umbreon",      ["Dark"]],
+  ["248","Tyranitar",    ["Rock","Dark"]],
+  ["212","Scizor",       ["Bug","Steel"]],
+  ["227","Skarmory",     ["Steel","Flying"]],
+  ["249","Lugia",        ["Psychic","Flying"]],
+  ["250","Ho-Oh",        ["Fire","Flying"]],
+  ["282","Gardevoir",    ["Psychic","Fairy"]],
+  ["302","Sableye",      ["Dark","Ghost"]],
+  ["330","Flygon",       ["Ground","Dragon"]],
+  ["373","Salamence",    ["Dragon","Flying"]],
+  ["376","Metagross",    ["Steel","Psychic"]],
+  ["384","Rayquaza",     ["Dragon","Flying"]],
+  ["445","Garchomp",     ["Dragon","Ground"]],
+  ["448","Lucario",      ["Fighting","Steel"]],
+  ["475","Gallade",      ["Psychic","Fighting"]],
+  ["493","Arceus",       ["Normal"]],
+  ["598","Ferrothorn",   ["Grass","Steel"]],
+  ["635","Hydreigon",    ["Dark","Dragon"]],
+  ["658","Greninja",     ["Water","Dark"]],
+  ["663","Talonflame",   ["Fire","Flying"]],
+  ["700","Sylveon",      ["Fairy"]],
+  ["706","Goodra",       ["Dragon"]],
+  ["784","Kommo-o",      ["Dragon","Fighting"]],
+  ["778","Mimikyu",      ["Ghost","Fairy"]],
+  ["800","Necrozma",     ["Psychic"]],
+  ["812","Rillaboom",    ["Grass"]],
+  ["887","Dragapult",    ["Dragon","Ghost"]],
+];
+
+// ─────────────────────────────────────────────────────────────────────────
+// UI
+// ─────────────────────────────────────────────────────────────────────────
+const sel1 = document.getElementById('type-1');
+const sel2 = document.getElementById('type-2');
+const selectedRow = document.getElementById('selected-row');
+const tiersEl = document.getElementById('tiers');
+const scopeEl = document.getElementById('scope');
+const pickerList = document.getElementById('picker-list');
+const pickerSearch = document.getElementById('picker-search');
+const pickerCount = document.getElementById('picker-count');
+
+// Populate type dropdowns
+function fillSelect(sel, includeBlank) {
+  if (includeBlank) sel.appendChild(new Option("— none —", ""));
+  TYPES.forEach(t => sel.appendChild(new Option(t, t)));
+}
+fillSelect(sel1, false);
+fillSelect(sel2, true);
+sel1.value = "Normal";
+sel2.value = "";
+
+function makeChip(type, big) {
+  const span = document.createElement('span');
+  span.className = 'chip' + (big ? ' chip-lg' : '');
+  span.style.setProperty('--c', `var(--t-${type.toLowerCase()})`);
+  span.textContent = type;
+  return span;
+}
+
+// Tier definitions
+const TIERS = [
+  { mult: 4,    label: "4×",   sub: "Quad-effective",   cls: "" },
+  { mult: 2,    label: "2×",   sub: "Super-effective",  cls: "" },
+  { mult: 1,    label: "1×",   sub: "Neutral",          cls: "dim" },
+  { mult: 0.5,  label: "½×",   sub: "Resisted",         cls: "dim" },
+  { mult: 0.25, label: "¼×",   sub: "Doubly resisted",  cls: "dim" },
+  { mult: 0,    label: "0×",   sub: "Immune",           cls: "dim" },
+];
+
+function buildTiers() {
+  tiersEl.innerHTML = "";
+  TIERS.forEach(tier => {
+    const row = document.createElement('div');
+    row.className = 'tier' + (tier.cls ? ' ' + tier.cls : '');
+    row.innerHTML = `
+      <div class="tier-label">
+        <em>${tier.label}</em>
+        <span class="sub">${tier.sub}</span>
+      </div>
+      <div class="tier-chips" data-mult="${tier.mult}"></div>`;
+    tiersEl.appendChild(row);
+  });
+}
+buildTiers();
+
+function render() {
+  const def1 = sel1.value;
+  const def2 = sel2.value || null;
+
+  // Update "selected" display
+  selectedRow.innerHTML = "";
+  if (def1) selectedRow.appendChild(makeChip(def1, true));
+  if (def2) selectedRow.appendChild(makeChip(def2, true));
+  if (!def1 && !def2) selectedRow.innerHTML = '<span class="none">No defender selected.</span>';
+
+  // Compute effectiveness for each attacker type
+  const buckets = { 4: [], 2: [], 1: [], 0.5: [], 0.25: [], 0: [] };
+  TYPES.forEach(attacker => {
+    const m = effectiveness(attacker, def1, def2);
+    if (buckets[m]) buckets[m].push(attacker);
+  });
+
+  // Render into tiers
+  document.querySelectorAll('.tier-chips').forEach(box => {
+    const mult = parseFloat(box.dataset.mult);
+    box.innerHTML = "";
+    const types = buckets[mult] || [];
+    if (!types.length) {
+      const e = document.createElement('span');
+      e.className = 'empty';
+      e.textContent = '—';
+      box.appendChild(e);
+    } else {
+      types.forEach(t => box.appendChild(makeChip(t)));
+    }
+  });
+
+  // Scope text
+  scopeEl.textContent = def2
+    ? `Defender: ${def1} / ${def2}`
+    : `Defender: ${def1}`;
+}
+
+sel1.addEventListener('change', () => { syncPickerActive(); render(); });
+sel2.addEventListener('change', () => { syncPickerActive(); render(); });
+
+// ─── Pokémon picker ───
+function renderPicker(filter = "") {
+  const f = filter.trim().toLowerCase();
+  const list = POKEMON.filter(p => !f || p[1].toLowerCase().includes(f) || p[0].includes(f));
+  pickerList.innerHTML = "";
+  list.forEach(([num, name, types]) => {
+    const row = document.createElement('div');
+    row.className = 'picker-row';
+    row.dataset.t1 = types[0];
+    row.dataset.t2 = types[1] || "";
+    row.innerHTML = `
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="num">#${num}</span>
+        <span class="name">${name}</span>
+      </div>
+      <div class="types">
+        ${types.map(t => `<span class="dot" style="background:var(--t-${t.toLowerCase()})" title="${t}"></span>`).join('')}
+      </div>`;
+    row.addEventListener('click', () => {
+      sel1.value = types[0];
+      sel2.value = types[1] || "";
+      render();
+      syncPickerActive();
+    });
+    pickerList.appendChild(row);
+  });
+  pickerCount.textContent = `${list.length} of ${POKEMON.length}`;
+  syncPickerActive();
+}
+
+function syncPickerActive() {
+  const t1 = sel1.value, t2 = sel2.value || "";
+  document.querySelectorAll('.picker-row').forEach(row => {
+    const match = row.dataset.t1 === t1 &&
+      (row.dataset.t2 === t2 || (row.dataset.t2 === "" && t2 === ""));
+    row.classList.toggle('active', match);
+  });
+}
+
+pickerSearch.addEventListener('input', e => renderPicker(e.target.value));
+
+renderPicker();
+render();
+</script>
+</body>
+</html>

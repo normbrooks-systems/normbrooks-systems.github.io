@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>A Massively Overbuilt Pokédex Spreadsheet — Norm Brooks</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="post.css" />
+
+<style>
+  .try-cta {
+    margin: 22px 0 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 22px;
+    background: var(--accent);
+    color: var(--bone);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background .15s;
+  }
+  .try-cta::after { content: "→"; font-size: 14px; transition: transform .2s; }
+  .try-cta:hover { background: color-mix(in oklab, var(--accent) 80%, var(--ink)); }
+  .try-cta:hover::after { transform: translateX(4px); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-mark">Norm <em>Brooks</em></a>
+    <a href="index.html#projects" class="back">Back to portfolio</a>
+  </div>
+</nav>
+
+<main>
+  <header class="head">
+    <div class="head-tag">
+      <div class="eyebrow">Independent project &middot; Data modeling</div>
+    </div>
+    <h1>A massively <em>overbuilt</em> Pokédex spreadsheet.</h1>
+    <p class="lede">
+      A type-matchup calculator over 893 Pokémon and three regional
+      variant systems, built as a study in runtime column dispatch and
+      schema-abstracted named ranges. The Pokédex is the cover story;
+      the engine is the point.
+    </p>
+    <dl class="meta">
+      <div><dt>Built</dt><dd>Weekend, late 2019</dd></div>
+      <div><dt>Stack</dt><dd>Google Sheets, named ranges, INDIRECT()</dd></div>
+      <div><dt>Scale</dt><dd>893 entries · 18 types · 3 regional forms</dd></div>
+      <div><dt>Calculator formulas</dt><dd>99 total</dd></div>
+    </dl>
+    <a href="pokedex.html" class="try-cta">Try the interactive calculator</a>
+  </header>
+
+  <article class="prose">
+
+    <section>
+      <p class="emph">
+        I made a major miscalculation.
+      </p>
+      <p>
+        Back in 2019 and 2020 — just before COVID — I bought Pokémon Sword.
+        I wanted the game because it was the first mainline Pokémon title
+        going to a television natively through the Switch. I hadn't
+        seriously played a Pokémon game since Yellow, and there have been
+        some… minor updates since then.
+      </p>
+      <p>
+        So I did what any self-respecting man would do and built a
+        massively overbuilt spreadsheet that acts more like a database
+        than a damage calculator.
+      </p>
+      <p>
+        The user-facing version is simple. Type a Pokémon's name in D1
+        and the sheet returns its full type listing across all regional
+        variants, lets you select which region you care about, shows the
+        evolution tree (region-specific forms included), tells you the
+        evolution stage and generation it was introduced in, displays a
+        defensive matchup chart against every attacking type, and lets
+        you preview damage multipliers including STAB.
+      </p>
+      <p>
+        That part isn't the interesting part. Any halfway-competent
+        spreadsheet user could build something with those features given
+        enough time. The interesting part is what's underneath.
+      </p>
+    </section>
+
+    <section>
+      <h2>The shape of the engine</h2>
+      <p>
+        The sheet has 18 types, three regional variant slots (Standard,
+        Alolan, Galarian), and 893 Pokémon. A naive implementation of the
+        damage calculator would write a separate set of formulas for
+        each region — one column for Standard's calculations, one for
+        Alolan, one for Galarian. That works, but it triples the formula
+        count, and adding a fourth region (Hisuian, Paldean) means
+        writing the entire calculation layer over again from scratch.
+      </p>
+      <p>
+        I didn't want that. I wanted to write the damage formula
+        <em>once</em> and have it dispatch to the right column at
+        runtime based on what the user selected. So I leaned on three
+        things working together.
+      </p>
+
+      <h3>Named ranges as a schema abstraction.</h3>
+      <p>
+        The Master Pokedex sheet stores the data, but no formula in the
+        workbook references it by cell coordinates. They reference a
+        named range called <code>Pokedex</code> instead. That means the
+        underlying sheet can grow, get reorganized, even get renamed —
+        and as long as the named range definition gets updated, every
+        formula in the workbook keeps working. Same logic for the type
+        charts (<code>Dmgchart</code>), the evolution trees
+        (<code>Treelookup</code>), the region selector dropdown values
+        (<code>Region</code>). The named ranges are a contract between
+        the data and the formulas; the contract doesn't care how the
+        data is laid out.
+      </p>
+
+      <h3>Runtime column dispatch via <code>INDIRECT(ADDRESS())</code>.</h3>
+      <p>The actual damage calculation looks like this:</p>
+      <pre>=HLOOKUP(INDIRECT(ADDRESS(3, VLOOKUP($F$20, RgnLookup, 2, FALSE), 4, 1)),
+         Dmgchart,
+         VLOOKUP(A21, Defend, 2, FALSE),
+         FALSE)</pre>
+      <p>
+        Read inside-out: the user's region selection ("Standard,"
+        "Alolan," "Galarian") gets looked up in <code>RgnLookup</code> to
+        find a column index. <code>ADDRESS()</code> builds a cell
+        reference to row 3 of that column. <code>INDIRECT()</code>
+        resolves the reference at runtime, returning whatever Pokémon
+        type lives in that cell — i.e., whatever type the selected
+        Pokémon is <em>for the selected region</em>. That value feeds
+        into <code>HLOOKUP</code> against the damage chart to find the
+        matchup multiplier.
+      </p>
+      <p>
+        The formula doesn't know what region you picked. It doesn't
+        need to. The dispatch happens at evaluation time. Adding a new
+        region is a four-step change: add a column to the Master
+        Pokedex, add a row to <code>RgnLookup</code>, add the region
+        label to the dropdown source range, done. No formula gets
+        touched.
+      </p>
+
+      <h3>Conditional schema for sparse data.</h3>
+      <p>
+        Most Pokémon only have their standard forms. I had to engineer
+        for graceful degradation when Alolan or Galarian is selected
+        for a Pokémon that doesn't have one, since the sheet is
+        intended to be used with the games that have those variant
+        forms. The fallback is invisible to the user; they just see
+        correct data.
+      </p>
+
+      <div class="pull">
+        The Calculator sheet has 99 formulas total. A naive implementation
+        would have several hundred — readable individually, unmaintainable
+        in aggregate.
+      </div>
+
+      <h3>UI: implementation hidden, results exposed.</h3>
+      <p>
+        Column M on the Calculator holds the dispatch tables
+        (<code>RgnLookup</code>, <code>TypeLookup</code>) and the
+        intermediate state for the defense calculator — the resolved
+        type 1, type 2, region, and per-type multipliers. It's hidden
+        from the user because they don't need to see it. They need the
+        inputs and the outputs. The implementation layer lives behind
+        the interface. That's the same separation databases use: hide
+        the query plan, expose the result.
+      </p>
+    </section>
+
+    <section>
+      <h2>What I punted on</h2>
+      <p>
+        Eevee. The Eeveelutions don't fit the schema cleanly — eight
+        evolutions, each requiring different conditions (specific
+        stones, friendship levels, time of day, location, move
+        learned), all sharing the same evolution tree. I tried to
+        encode the conditions in the same column the system uses for
+        every other Pokémon and it kept producing wrong output. So the
+        Evolution Condition column for the Eeveelutions reads
+        <code>"Go to Master Pokedex Cell Q20."</code> It's a pointer
+        to a manual reference. Knowing where the schema breaks down
+        and not faking structure that isn't there felt better than the
+        alternative.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="quiet">Provenance</h2>
+      <p class="closing">
+        Built over a weekend in late 2019, when Sword and Shield came
+        out. I shared an earlier version on Reddit at the time. These
+        days I'd have probably generated a database with cross-linked
+        tables and used AI to generate a Python front-end instead of
+        leaning on complex formulas and conditional formatting. But the
+        patterns I used here are the same ones I'd use today; the
+        design is good and I haven't found reason to change the
+        thinking behind it. The Pokémon I built it for, by the way,
+        was Garbodor. I had zero idea what a Garbodor was.
+      </p>
+    </section>
+
+  </article>
+
+  <footer class="post-foot">
+    <a href="index.html#projects" class="back">Back to portfolio</a>
+  </footer>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,1189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Norm Brooks — Systems & Operations</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Fraunces:ital,wght@0,400;0,500;1,400&family=Bodoni+Moda:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bone: #F4EFE5;
+    --ink: #1C1813;
+    --accent: #B83A26;
+    --muted: color-mix(in oklab, var(--ink) 55%, var(--bone));
+    --rule: color-mix(in oklab, var(--ink) 14%, var(--bone));
+    --display-font: "Instrument Serif", serif;
+    --sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+    --scale: 1;
+    --max: 1180px;
+    --gutter: 32px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { background: var(--bone); }
+  body {
+    background: var(--bone);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: calc(16px * var(--scale));
+    line-height: 1.55;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection { background: var(--accent); color: var(--bone); }
+
+  a { color: inherit; text-decoration: none; }
+  a.link {
+    border-bottom: 1px solid color-mix(in oklab, var(--ink) 30%, transparent);
+    transition: border-color .2s, color .2s;
+  }
+  a.link:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ───────── Top nav ───────── */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in oklab, var(--bone) 88%, transparent);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    border-bottom: 1px solid var(--rule);
+  }
+  .nav-inner {
+    max-width: var(--max); margin: 0 auto;
+    padding: 14px var(--gutter);
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 13px;
+  }
+  .nav-mark { font-family: var(--display-font); font-size: 22px; letter-spacing: .01em; }
+  .nav-mark em { font-style: italic; color: var(--accent); }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a { color: var(--muted); transition: color .15s; }
+  .nav-links a:hover { color: var(--ink); }
+
+  /* ───────── Page frame ───────── */
+  main { display: block; }
+  section { padding: clamp(64px, 9vw, 128px) var(--gutter); }
+  .wrap { max-width: var(--max); margin: 0 auto; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .eyebrow::before {
+    content: ""; display: inline-block;
+    width: 18px; height: 1px; background: var(--accent);
+  }
+
+  /* ───────── Hero ───────── */
+  .hero { padding-top: clamp(56px, 8vw, 96px); padding-bottom: clamp(56px, 8vw, 96px); }
+  .hero-grid {
+    max-width: var(--max); margin: 0 auto;
+    display: grid; gap: clamp(32px, 5vw, 72px);
+    grid-template-columns: 1.05fr .95fr;
+    align-items: center;
+  }
+  body[data-hero="stacked"] .hero-grid {
+    grid-template-columns: 1fr;
+  }
+  body[data-hero="stacked"] .hero-image {
+    aspect-ratio: 16 / 7;
+    order: 2;
+  }
+
+  .hero h1 {
+    font-family: var(--display-font);
+    font-weight: 400;
+    font-size: clamp(56px, 8.5vw, 120px);
+    line-height: 0.96;
+    letter-spacing: -0.012em;
+    margin: 18px 0 22px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero p.lede {
+    font-size: clamp(17px, 1.4vw, 20px);
+    line-height: 1.55;
+    color: color-mix(in oklab, var(--ink) 78%, var(--bone));
+    max-width: 36ch;
+    text-wrap: pretty;
+  }
+  .hero-meta {
+    display: flex; gap: 24px; flex-wrap: wrap;
+    margin-top: 36px;
+    font-family: var(--mono); font-size: 11.5px;
+    color: var(--muted); letter-spacing: .04em;
+  }
+  .hero-meta span b {
+    color: var(--ink); font-weight: 500;
+  }
+
+  .hero-image {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border: 1px solid var(--rule);
+  }
+  .hero-image img { width: 100%; height: 100%; display: block; object-fit: cover; }
+
+  /* ───────── Section header ───────── */
+  .sec-head {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 40px;
+    align-items: baseline;
+    padding-bottom: 36px;
+    margin-bottom: 56px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .sec-head h2 {
+    font-family: var(--display-font);
+    font-weight: 400;
+    font-size: clamp(36px, 4.2vw, 56px);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    margin: 14px 0 0;
+  }
+  .sec-head .sec-note {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--muted);
+    max-width: 52ch;
+    text-wrap: pretty;
+  }
+
+  /* ───────── Case study ───────── */
+  .case + .case { margin-top: clamp(72px, 9vw, 128px); }
+
+  .case-frame {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 40px;
+  }
+  .case-meta { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+  .case-meta dl { margin: 0; display: grid; gap: 18px; }
+  .case-meta dt {
+    letter-spacing: .12em; text-transform: uppercase;
+    font-size: 10.5px; color: color-mix(in oklab, var(--muted) 70%, var(--bone));
+    margin-bottom: 4px;
+  }
+  .case-meta dd {
+    margin: 0; color: var(--ink); font-family: var(--sans); font-size: 13px; line-height: 1.45;
+  }
+  .case-meta dd.role { font-weight: 500; }
+
+  .case-body h3 {
+    font-family: var(--display-font);
+    font-weight: 400;
+    font-size: clamp(28px, 3.4vw, 44px);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+  }
+  .case-body h3 em { font-style: italic; color: var(--accent); }
+  .case-body .org {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 28px;
+    font-family: var(--mono);
+    letter-spacing: .04em;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin: 0 0 36px;
+  }
+  .stat {
+    background: var(--bone);
+    padding: 20px 22px 22px;
+  }
+  .stat .num {
+    font-family: var(--display-font);
+    font-size: clamp(40px, 4.6vw, 60px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .stat .num em { font-style: italic; color: var(--accent); }
+  .stat .num sup {
+    font-family: var(--sans);
+    font-size: .42em;
+    font-weight: 500;
+    vertical-align: top;
+    margin-left: 2px;
+    letter-spacing: .02em;
+    color: var(--muted);
+  }
+  .stat .cap {
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .case-body p {
+    font-size: 16.5px;
+    line-height: 1.65;
+    margin: 0 0 16px;
+    max-width: 64ch;
+    text-wrap: pretty;
+  }
+  .case-body p.dropcap::first-letter {
+    font-family: var(--display-font);
+    font-size: 4.2em;
+    line-height: .82;
+    float: left;
+    margin: 4px 12px 0 0;
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  .pull {
+    border-left: 2px solid var(--accent);
+    padding: 4px 0 4px 22px;
+    margin: 28px 0;
+    font-family: var(--display-font);
+    font-style: italic;
+    font-size: clamp(22px, 2.4vw, 30px);
+    line-height: 1.25;
+    color: var(--ink);
+    max-width: 36ch;
+  }
+
+  /* ───────── Method block (technical deep dive inside a case) ───────── */
+  details.method {
+    margin: 36px 0 32px;
+    padding: 0;
+    background: color-mix(in oklab, var(--ink) 4%, var(--bone));
+    border: 1px solid var(--rule);
+  }
+  details.method > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 24px 30px 24px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 24px;
+    user-select: none;
+    transition: background .15s;
+  }
+  details.method > summary::-webkit-details-marker { display: none; }
+  details.method > summary:hover { background: color-mix(in oklab, var(--ink) 3%, transparent); }
+  details.method[open] > summary {
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .method-toggle {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: inline-flex; align-items: center; gap: 10px;
+    white-space: nowrap;
+    padding-bottom: 4px;
+  }
+  .method-toggle::after {
+    content: "+";
+    font-family: var(--mono);
+    font-size: 16px;
+    color: var(--accent);
+    transition: transform .2s;
+    line-height: 1;
+  }
+  details.method[open] .method-toggle::after { content: "–"; }
+  details.method[open] .method-toggle .label-closed { display: none; }
+  details.method:not([open]) .method-toggle .label-open { display: none; }
+  .method-h {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .method-title {
+    font-family: var(--display-font);
+    font-weight: 400;
+    font-size: 26px;
+    line-height: 1.15;
+    letter-spacing: -0.005em;
+    margin: 0 0 22px;
+  }
+  .method-title em { font-style: italic; color: var(--accent); }
+  .method-title { margin: 0; }
+  .method ol {
+    counter-reset: m;
+    list-style: none;
+    margin: 24px 30px 30px;
+    padding: 0;
+    display: grid; gap: 22px;
+  }
+  .method li {
+    counter-increment: m;
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 18px;
+    align-items: baseline;
+  }
+  .method li::before {
+    content: counter(m, decimal-leading-zero);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .08em;
+    color: var(--accent);
+    padding-top: 2px;
+    border-top: 1px solid var(--accent);
+    align-self: start;
+    width: 38px;
+  }
+  .method li h4 {
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 15.5px;
+    margin: 0 0 6px;
+    letter-spacing: -0.005em;
+  }
+  .method li p {
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: color-mix(in oklab, var(--ink) 82%, var(--bone));
+    margin: 0;
+    max-width: 60ch;
+  }
+  @media (max-width: 880px) {
+    details.method > summary { padding: 18px 20px; gap: 12px; }
+    .method ol { margin: 20px 20px 22px; }
+    .method li { grid-template-columns: 40px 1fr; gap: 12px; }
+    .method li::before { width: 28px; }
+  }
+  /* ───────── Full-bleed image break ───────── */
+  .break {
+    padding: 0;
+    margin: clamp(48px, 8vw, 96px) 0;
+    height: clamp(280px, 38vw, 520px);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    overflow: hidden;
+  }
+  .break img { width: 100%; height: 100%; display: block; object-fit: cover; }
+
+  /* ───────── Projects grid ───────── */
+  .projects {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    align-items: stretch;
+  }
+  .project {
+    background: var(--bone);
+    padding: 32px 28px 36px;
+    display: flex; flex-direction: column;
+    min-height: 320px;
+    transition: background .2s;
+  }
+  .project:has(details[open]) { background: color-mix(in oklab, var(--ink) 3%, var(--bone)); }
+  .project .tag {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .project h3 {
+    font-family: var(--display-font);
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 1.05;
+    letter-spacing: -0.005em;
+    margin: 0 0 12px;
+  }
+  .project h3 em { font-style: italic; color: var(--accent); }
+  .project p {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: color-mix(in oklab, var(--ink) 82%, var(--bone));
+    margin: 0 0 auto;
+    max-width: 38ch;
+  }
+  .project .stack {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--muted);
+    letter-spacing: .04em;
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+  }
+  .project .repo {
+    font-family: var(--mono);
+    font-size: 12px;
+    margin-top: 12px;
+    color: var(--ink);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .project .repo:hover { color: var(--accent); }
+  .project .repo::after { content: "→"; transition: transform .2s; }
+  .project .repo:hover::after { transform: translateX(3px); }
+
+  /* Expandable "How I did it" ───────── */
+  .project details.howto {
+    margin-top: 14px;
+    border-top: 1px solid var(--rule);
+    padding-top: 14px;
+  }
+  .project details.howto > summary {
+    list-style: none;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: inline-flex; align-items: center; gap: 8px;
+    user-select: none;
+    transition: color .15s;
+  }
+  .project details.howto > summary::-webkit-details-marker { display: none; }
+  .project details.howto > summary::after {
+    content: "+";
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent);
+    transition: transform .2s;
+    line-height: 1;
+  }
+  .project details.howto[open] > summary::after { content: "–"; }
+  .project details.howto > summary:hover { color: var(--ink); }
+
+  .howto-body {
+    margin-top: 18px;
+    display: grid;
+    gap: 16px;
+  }
+  .howto-step {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+    align-items: baseline;
+  }
+  .howto-step .n {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .08em;
+    color: var(--accent);
+    padding-top: 2px;
+    border-top: 1px solid var(--accent);
+    align-self: start;
+  }
+  .howto-step h4 {
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 13.5px;
+    margin: 0 0 4px;
+    line-height: 1.3;
+  }
+  .howto-step p {
+    font-size: 13px;
+    line-height: 1.55;
+    margin: 0;
+    color: color-mix(in oklab, var(--ink) 82%, var(--bone));
+    max-width: none;
+  }
+
+  /* ───────── About ───────── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 40px;
+  }
+  .about-portrait {
+    aspect-ratio: 4/5;
+    border: 1px solid var(--rule);
+    overflow: hidden;
+  }
+  .about-portrait img { width:100%; height:100%; display:block; object-fit: cover; }
+  .about-body {
+    max-width: 60ch;
+  }
+  .about-body p {
+    font-size: 16.5px;
+    line-height: 1.7;
+    margin: 0 0 18px;
+    text-wrap: pretty;
+  }
+  .about-body p.lede {
+    font-size: 22px;
+    line-height: 1.45;
+    font-family: var(--display-font);
+    margin-bottom: 28px;
+  }
+  .about-body .heritage {
+    margin-top: 24px;
+    padding: 22px 24px;
+    border: 1px solid var(--rule);
+    background: color-mix(in oklab, var(--ink) 3%, var(--bone));
+    font-size: 15.5px;
+    line-height: 1.65;
+  }
+  .about-body .heritage .label {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  body[data-heritage="off"] .heritage { display: none; }
+
+  /* ───────── Competencies ───────── */
+  .competencies {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 28px;
+  }
+  .competencies .chip {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .04em;
+    padding: 6px 11px;
+    border: 1px solid var(--rule);
+    color: var(--muted);
+    border-radius: 999px;
+  }
+
+  /* ───────── Contact ───────── */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 40px;
+    align-items: baseline;
+  }
+  .contact h2 {
+    font-family: var(--display-font);
+    font-weight: 400;
+    font-size: clamp(48px, 7vw, 92px);
+    line-height: 1;
+    letter-spacing: -0.015em;
+    margin: 0 0 12px;
+  }
+  .contact h2 em { font-style: italic; color: var(--accent); }
+  .contact-info {
+    display: grid; gap: 14px;
+    font-size: 16px;
+    margin-top: 18px;
+  }
+  .contact-info .row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 14px;
+    align-items: baseline;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .contact-info .row .k {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ───────── Footer ───────── */
+  footer {
+    padding: 32px var(--gutter) 56px;
+    border-top: 1px solid var(--rule);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .06em;
+  }
+  footer .wrap {
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  }
+
+  /* ───────── Responsive ───────── */
+  @media (max-width: 820px) {
+    .hero-grid,
+    .sec-head,
+    .case-frame,
+    .about-grid,
+    .contact-grid { grid-template-columns: 1fr; gap: 28px; }
+    .sec-head { margin-bottom: 36px; padding-bottom: 24px; }
+    .projects { grid-template-columns: 1fr; }
+    .nav-links { gap: 18px; font-size: 12px; }
+    .case-meta dl { grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .about-portrait { max-width: 280px; }
+  }
+</style>
+</head>
+<body data-hero="split" data-heritage="on">
+
+<!-- ────────────── NAV ────────────── -->
+<nav class="nav" data-screen-label="00 Nav">
+  <div class="nav-inner">
+    <a href="#top" class="nav-mark">Norm <em>Brooks</em></a>
+    <div class="nav-links">
+      <a href="#work">Work</a>
+      <a href="#projects">Projects</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+
+  <!-- ────────────── HERO ────────────── -->
+  <section class="hero" data-screen-label="01 Hero">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">Monroe, VA &middot; 2026</div>
+        <h1>I find the <em>speed</em><br/>others miss.</h1>
+        <p class="lede">
+          Systems and operations work for places where the obvious answer has already failed.
+          Two decades of reframing process bottlenecks, repairing data pipelines, and building
+          the small infrastructure other people end up depending on.
+        </p>
+        <div class="hero-meta">
+          <span><b>20+</b> &nbsp;years in operations</span>
+          <span><b>$5M</b> &nbsp;inventory under analysis</span>
+          <span><b>4&times;</b> &nbsp;peak throughput uplift</span>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img src="img/hero.webp" alt="Blue #00 dirt-track car sliding sideways through a corner" loading="lazy" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ────────────── WORK ────────────── -->
+  <section id="work" data-screen-label="02 Work">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Selected Work</div>
+        <div>
+          <h2>Two jobs.<br/>Same pattern.</h2>
+        </div>
+        <div></div>
+        <p class="sec-note">
+          In both roles I was hired floor-level and ended up rebuilding the systems
+          underneath the job. The metrics below are the part that's measurable — the
+          deeper work was teaching the data to tell the truth.
+        </p>
+      </div>
+
+      <!-- Case 1 — Innovairre -->
+      <article class="case">
+        <div class="case-frame">
+          <aside class="case-meta">
+            <dl>
+              <div><dt>Company</dt><dd>Innovairre Communications</dd></div>
+              <div><dt>Location</dt><dd>Forest, VA</dd></div>
+              <div><dt>Tenure</dt><dd>2014 — 2026</dd></div>
+              <div><dt>Roles</dt><dd>Temp · 2014–2015<br/>Operator · 2015–2024<br/>Production Supervisor<br/>· Oct 2024 — Sep 2025<br/>Production Coordinator<br/>· Sep 2025 — Feb 2026</dd></div>
+              <div><dt>Key dates</dt><dd>Camera SOP · 2019<br/>Dashboard · Jan 2025<br/>Multi-state · Sep 2025</dd></div>
+              <div><dt>Sector</dt><dd>High-volume direct mail<br/>National nonprofit + commercial</dd></div>
+            </dl>
+          </aside>
+
+          <div class="case-body">
+            <h3>Ten years as an <em>operator</em>.<br/>One year to build the systems.</h3>
+            <div class="org">Innovairre Communications &middot; Temp 2014 · Operator 2015–2024 · Production Supervisor Oct 2024 — Sep 2025 · Production Coordinator Sep 2025 — Feb 2026</div>
+
+            <div class="stats">
+              <div class="stat">
+                <div class="num">4<em>&times;</em></div>
+                <div class="cap">Throughput on the<br/>key matching process</div>
+              </div>
+              <div class="stat">
+                <div class="num">8<em>&times;</em><sup>labor</sup></div>
+                <div class="cap">Productivity multiplier<br/>after the SOP shift</div>
+              </div>
+              <div class="stat">
+                <div class="num">+20<em>%</em></div>
+                <div class="cap">Sustained night-shift<br/>uplift, year-long</div>
+              </div>
+              <div class="stat">
+                <div class="num">2<em></em></div>
+                <div class="cap">State facilities<br/>using the same tools</div>
+              </div>
+            </div>
+
+            <p class="dropcap">
+              For ten years I was an operator on the floor. The work that
+              ended up mattering most happened around that job, not because
+              of it. The first piece, in 2019, was a Pitney Bowes FlowMaster
+              envelope inserter running a carrier-matched job at 4,000
+              pieces per hour &mdash; about a third of what the machine was
+              rated for &mdash; because that was as fast as the human at
+              the QC seat could keep up. Accepted wisdom held that this
+              specific machine couldn't read carriers in line. Accepted
+              wisdom turned out to be inherited, not engineered.
+            </p>
+
+            <details class="method">
+              <summary>
+                <div>
+                  <div class="method-h">Method &middot; FlowMaster carrier-read SOP, 2019</div>
+                  <h3 class="method-title">What conventional wisdom <em>didn't know</em> about the machine.</h3>
+                </div>
+                <span class="method-toggle">
+                  <span class="label-closed">Read the method</span>
+                  <span class="label-open">Hide method</span>
+                </span>
+              </summary>
+              <ol>
+                <li>
+                  <div>
+                    <h4>Notice the rule the role had inherited.</h4>
+                    <p>The handbook said "check every five pieces" at the QC
+                    seat. The intent was a time-based sample &mdash; pop a wet
+                    flap, verify the insert against the carrier, reseal before
+                    the glue cured. In practice, operators who couldn't hit
+                    the three-second loop drifted into reading "every five"
+                    as a position count, grabbing whatever piece sat five
+                    slots down the belt. By then the glue had set and the
+                    check became a fight against a sealed envelope.</p>
+                  </div>
+                </li>
+                <li>
+                  <div>
+                    <h4>Cost out the actual failure mode.</h4>
+                    <p>When the inserter desynced from the carrier feed,
+                    recovery wasn't "pull the bad piece." It was working
+                    backward through the sealed pieces on the sort table,
+                    opening each one without destroying the carrier, and
+                    re-pairing inserts to recipients. A 50-to-60-piece
+                    reconstruction was a 30-to-40-minute floor stop. I had
+                    a Pilot Precise V5 with the print worn off the barrel
+                    from being used backward as a flap lifter; I still
+                    have it.</p>
+                  </div>
+                </li>
+                <li>
+                  <div>
+                    <h4>Look at what the machine already had.</h4>
+                    <p>The FlowMaster carried three cameras for inline
+                    barcode reads, a mismatch-stop circuit, and an onboard
+                    encoder that put the carrier at a known position every
+                    cycle. The carriers themselves had a 2D barcode in the
+                    upper-right corner &mdash; the spot the stamp would
+                    later cover &mdash; readable from below as the piece
+                    passed face-down through the chain conveyor. Everything
+                    needed to read the carrier in line was already on the
+                    machine. The "you can't read a carrier on a FlowMaster"
+                    answer had hardened into something nobody had
+                    re-examined.</p>
+                  </div>
+                </li>
+                <li>
+                  <div>
+                    <h4>Two hours, one mount, one camera moved.</h4>
+                    <p>Walked up to the supervisor and said I'd beat first
+                    and second shift's combined number by end of shift if
+                    he gave me two hours. He gave them to me because the
+                    trust ledger was real. Jury-rigged a mount under the
+                    carrier conveyor, relocated one of the three cameras
+                    with its trigger and data cables, configured it against
+                    the existing match-stop, ran test pieces, started the
+                    run. No new software. The configuration files already
+                    supported what I needed.</p>
+                  </div>
+                </li>
+                <li>
+                  <div>
+                    <h4>The cascade matters more than the multiplier.</h4>
+                    <p>The 4&times; line throughput is the part that fits on
+                    a resume; it's downstream of removing the human-pacing
+                    constraint, not of any speed improvement. Within twelve
+                    hours the scheduler saw what one machine was now doing
+                    and reduced the job from three FlowMasters to one. Two
+                    machines and five operators freed for other work.
+                    Weekend overtime cleared. The machine's mechanical
+                    capability didn't change &mdash; the constraint
+                    downstream of it did, and the schedule reorganized
+                    around the new reality.</p>
+                  </div>
+                </li>
+              </ol>
+            </details>
+
+            <p>
+              In October 2024 I moved off the floor into Production Supervisor
+              over the night shift. The line climbed steadily from there — by
+              February it was holding a sustained 20% production uplift, and it
+              kept holding through September. The week I stopped being the
+              supervisor, the number more or less stopped too.
+            </p>
+
+            <p>
+              The other thing that came out of those months was the dashboard
+              — January 2025, in Google Sheets. Date-partitioned data,
+              compound-key joins, runtime schema resolution. The kind of thing
+              that should live in a real warehouse, but the spreadsheet was
+              what management would actually open every morning. They still do.
+            </p>
+
+            <div class="pull">
+              By September, an outside consultant (Advatix) asked me to extend
+              the analytics across two states — working in lieu of contracted
+              external labor.
+            </div>
+
+            <p>
+              The pattern across all of it: the work people called impossible
+              was usually someone's assumption, hardened into policy. Find the
+              assumption, look at it directly, and a lot of the problem just
+              leaves on its own.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Full-bleed break -->
+      <div class="break" aria-hidden="true">
+        <img src="img/break-1.webp" alt="Earl Brooks Jr. drilling on a race car at sunset, lettering on the hood" loading="lazy" />
+      </div>
+
+      <!-- Case 2 — Hackney -->
+      <article class="case">
+        <div class="case-frame">
+          <aside class="case-meta">
+            <dl>
+              <div><dt>Company</dt><dd>H.T. Hackney Co.<br/>Quality Foods, Inc.</dd></div>
+              <div><dt>Location</dt><dd>Lynchburg, VA</dd></div>
+              <div><dt>Tenure</dt><dd>2005 — 2013</dd></div>
+              <div><dt>Roles</dt><dd>Operator · 2005<br/>USDA school foods<br/>Caller (truck loading)<br/>Loader · 2006<br/>Receiving Clerk · 2007–2011<br/>Asst. First Shift Supervisor<br/>· 2011–2013</dd></div>
+              <div><dt>Sector</dt><dd>Wholesale grocery<br/>20,000+ retail locations, 22 states</dd></div>
+            </dl>
+          </aside>
+
+          <div class="case-body">
+            <h3>The variance was <em>signal</em>, not noise.</h3>
+            <div class="org">H.T. Hackney Co. / Quality Foods &middot; 2005 — 2013 · Receiving Clerk → Asst. First Shift Supervisor</div>
+
+            <div class="stats">
+              <div class="stat">
+                <div class="num">99.98<em>%</em></div>
+                <div class="cap">Inventory accuracy,<br/>sustained, $5M stock</div>
+              </div>
+              <div class="stat">
+                <div class="num">&minus;75<em>%</em></div>
+                <div class="cap">Labor on a major<br/>departmental workflow</div>
+              </div>
+              <div class="stat">
+                <div class="num">4 <em>→</em> 1</div>
+                <div class="cap">Consolidated headcount,<br/>same throughput</div>
+              </div>
+              <div class="stat">
+                <div class="num">6<em>mo</em></div>
+                <div class="cap">Audit cycles held<br/>at the same accuracy</div>
+              </div>
+            </div>
+
+            <p class="dropcap">
+              Counting variance, in most distribution centers, is treated as a fact of
+              life. You patch the output and move on. I started reading variance the
+              other direction — as an error message from a data pipeline upstream of
+              the warehouse floor. Receiving, PO, billing. Each off by something
+              small, in a specific way.
+            </p>
+
+            <p>
+              We built a forensic tracing methodology that fixed the inputs instead of
+              massaging the outputs. The accuracy number stopped moving. Audits stopped
+              being events.
+            </p>
+
+            <details class="method">
+              <summary>
+                <div>
+                  <div class="method-h">Method &middot; Forensic variance tracing</div>
+                  <h3 class="method-title">Treating the shelf as the <em>last honest narrator</em>.</h3>
+                </div>
+                <span class="method-toggle">
+                  <span class="label-closed">Read the method</span>
+                  <span class="label-open">Hide method</span>
+                </span>
+              </summary>
+              <ol>
+                <li>
+                  <div>
+                    <h4>Flip the ground truth.</h4>
+                    <p>Textbook approach treats the system record as truth
+                    and the count as the noisy thing being verified. I worked
+                    the opposite way. Receiving paperwork, POs, billing
+                    records, and item masters are all <em>claims</em> &mdash;
+                    entered by humans, in a hurry, often by humans who hadn't
+                    handled the physical product. The shelf is the integrator.
+                    When physical and system disagreed, my first assumption
+                    was that something upstream had told the system a lie
+                    and the count was the first place we'd noticed.</p>
+                  </div>
+                </li>
+                <li>
+                  <div>
+                    <h4>Trace contradictions back through the pipeline.</h4>
+                    <p>For each variance event, I walked the affected SKU back
+                    through receiving documents, the originating PO, the
+                    matching billing record, and the item master. Records get
+                    cross-checked against each other, not just against the
+                    count. Most errors clustered at one or two predictable
+                    handoffs.</p>
+                  </div>
+                </li>
+                <li>
+                  <div>
+                    <h4>A worked example: 1,800 cartons of nothing.</h4>
+                    <p>System said sixty half-cases of Newport 100s &mdash;
+                    eighteen hundred cartons. Picking went looking and found
+                    zero. Tracing backward: a pallet of a cheaper brand had
+                    been received on a delivery and keyed under the Newport
+                    SKU at data entry. One keystroke desynced two products
+                    at once &mdash; the Newports we thought we had, we never
+                    received; the cheaper brand the system didn't know about
+                    sat in the bin under the wrong name while we kept
+                    reordering more of it. Conventional cycle-counting would
+                    have surfaced the discrepancy eventually. By "eventually"
+                    we'd have run out of Newports on live customer accounts.
+                    Both halves of the error fell out of the same upstream
+                    event.</p>
+                  </div>
+                </li>
+                <li>
+                  <div>
+                    <h4>Fix the input, not the output.</h4>
+                    <p>Standard remediation is to adjust the inventory record
+                    to match the count and move on. Instead we fed the trace
+                    back upstream &mdash; corrected receiving practice,
+                    corrected data-entry checks at intake, corrected the
+                    billing reconciliation step. Each fix removed a class
+                    of variance, not a single instance. Patching outputs is
+                    infinite work; fixing the input that produces wrong
+                    outputs is bounded work.</p>
+                  </div>
+                </li>
+                <li>
+                  <div>
+                    <h4>Hold it at 99.98% across multiple cycles.</h4>
+                    <p>Sustained on $5M of stock across multiple six-month
+                    audit cycles &mdash; with peak cigarette inventory
+                    running around two million on its own. The number wasn't
+                    the goal. The goal was that audits stopped being events
+                    anyone had to prepare for.</p>
+                  </div>
+                </li>
+              </ol>
+            </details>
+
+            <div class="pull">
+              The second project that year was a department reorganization — four
+              operators consolidated into a one-person workflow by laying out the
+              inventory for visual identification and a sane pick route.
+            </div>
+
+            <p>
+              Same throughput. Same accuracy. A quarter of the labor. Nobody had
+              looked at the floor plan as if it were a data structure before.
+            </p>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ────────────── PROJECTS ────────────── -->
+  <section id="projects" data-screen-label="03 Projects">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Independent Projects</div>
+        <div>
+          <h2>What I build<br/>on my own time.</h2>
+        </div>
+        <div></div>
+        <p class="sec-note">
+          Side work that gives the operations toolbox somewhere to grow. Embedded
+          hardware, LLM pipelines, data-modeling exercises. Each one is the smallest
+          interesting version of a thing I wanted to understand from the inside out.
+        </p>
+      </div>
+
+      <div class="projects">
+        <article class="project">
+          <div class="tag">LLM &middot; ETL</div>
+          <h3>Prose-to-<em>structured</em> extraction.</h3>
+          <p>
+            A pipeline that takes free-text source documents, extracts entities into
+            a defined schema, and carries source provenance through every record so
+            corrections are traceable back to the line that produced them.
+          </p>
+          <div class="stack">Python &middot; LLM &middot; Schema-validated output &middot; Provenance trails</div>
+          <a class="repo" href="llm.html" aria-label="Read the full LLM pipeline writeup">read the writeup</a>
+        </article>
+
+        <article class="project">
+          <div class="tag">Embedded &middot; IoT</div>
+          <h3>Weather station &amp; <em>HVAC</em> brain.</h3>
+          <p>
+            A distributed ESP32 / C++ system with MQTT-federated sensors and a
+            control panel that runs HVAC decisions from the resulting feed. Built
+            to survive a Virginia summer and a network restart, in that order.
+          </p>
+          <div class="stack">ESP32 &middot; C/C++ &middot; MQTT &middot; Embedded sensors</div>
+          <a class="repo" href="weather-station.html" aria-label="Read the weather station design writeup">read the writeup</a>
+        </article>
+
+        <article class="project">
+          <div class="tag">Data modeling</div>
+          <h3>Pokédex as a <em>schema</em> exercise.</h3>
+          <p>
+            A type-matchup calculator over 893 entries that's really an exercise in
+            runtime column dispatch and schema-abstracted named ranges. The Pokédex
+            is the cover story; the engine is what's interesting.
+          </p>
+          <div class="stack">Sheets &middot; Schema dispatch &middot; 893 entries</div>
+          <a class="repo" href="pokedex-writeup.html" aria-label="Read the Pokédex writeup">read the writeup</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ────────────── BREAK ────────────── -->
+  <div class="break" aria-hidden="true">
+    <img src="img/break-2.webp" alt="Late-model cars lined up under stadium lights at a dirt-track night race" loading="lazy" />
+  </div>
+
+  <!-- ────────────── ABOUT ────────────── -->
+  <section id="about" data-screen-label="04 About">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">About</div>
+        <div>
+          <h2>The shape<br/>of the work.</h2>
+        </div>
+        <div></div>
+        <p class="sec-note">
+          A short bio, and a note about the family name on the door — since
+          you've probably already noticed it.
+        </p>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-portrait">
+          <img src="img/portrait.webp" alt="Portrait of Norm Brooks" loading="lazy" />
+        </div>
+
+        <div class="about-body">
+          <p class="lede">
+            I'm a systems-and-operations person who tends to get hired floor-level
+            and ends up rebuilding the spreadsheet that runs the building.
+          </p>
+          <p>
+            My instinct is to treat operational problems as data problems first.
+            When the warehouse can't agree with its own books, when the line bottlenecks
+            on a step that everyone agrees is fixed, when the spreadsheet management
+            uses every morning was last edited three years ago — those are the
+            situations I do my best work in. The throughput and accuracy numbers on
+            this page are downstream of one habit: I treat variance as a question, not
+            a tax.
+          </p>
+          <p>
+            I work across systems engineering, process optimization, applied LLM
+            tooling, and embedded hardware. The connecting tissue is schema design
+            and a stubborn belief that most "intractable" problems are unexamined.
+          </p>
+
+          <div class="heritage">
+            <div class="label">A note on the name</div>
+            My grandfather Earl Brooks Sr. and my father Earl Brooks Jr. spent
+            their working lives in stock car racing. I didn't follow them onto the
+            track — I took the part of racing that lives off it. Finding speed in
+            margins the rest of the field has written off as fixed. That's the work,
+            and that's the only inheritance I'm claiming.
+          </div>
+
+          <div class="competencies">
+            <span class="chip">Distributed systems</span>
+            <span class="chip">LLM pipelines</span>
+            <span class="chip">Schema design</span>
+            <span class="chip">Embedded (ESP32, C/C++)</span>
+            <span class="chip">Forensic data analysis</span>
+            <span class="chip">Throughput engineering</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ────────────── CONTACT ────────────── -->
+  <section id="contact" class="contact" data-screen-label="05 Contact">
+    <div class="wrap">
+      <div class="contact-grid">
+        <div class="eyebrow">Get in touch</div>
+        <div>
+          <h2>Let's <em>talk</em>.</h2>
+          <p style="max-width:48ch;font-size:16.5px;line-height:1.6;color:var(--muted);margin:0;">
+            Remote-friendly and open to operations, systems, or applied-AI work where
+            the problem has resisted the obvious approach. Short notes welcome.
+          </p>
+
+          <div class="contact-info">
+            <div class="row">
+              <span class="k">Email</span>
+              <a class="link" href="mailto:normbrooks-systems@gmail.com">normbrooks-systems@gmail.com</a>
+            </div>
+            <div class="row">
+              <span class="k">Phone</span>
+              <a class="link" href="tel:+14344449181">(434) 444-9181</a>
+            </div>
+            <div class="row">
+              <span class="k">Site</span>
+              <a class="link" href="https://normbrooks-systems.github.io">normbrooks-systems.github.io</a>
+            </div>
+            <div class="row">
+              <span class="k">Résumé</span>
+              <a class="link" href="resume.pdf" download>Download PDF</a>
+            </div>
+            <div class="row">
+              <span class="k">Based</span>
+              <span>Monroe, Virginia</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>&copy; 2026 Norm Brooks</span>
+    <span>Built quietly in Monroe, VA</span>
+  </div>
+</footer>
+
+</body>
+</html>
