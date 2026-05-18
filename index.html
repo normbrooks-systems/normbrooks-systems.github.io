@@ -313,6 +313,35 @@
   details.method[open] .method-toggle::after { content: "–"; }
   details.method[open] .method-toggle .label-closed { display: none; }
   details.method:not([open]) .method-toggle .label-open { display: none; }
+
+  /* Method-style frame that links to a dedicated writeup page */
+  a.method-link {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 24px;
+    margin: 36px 0 32px;
+    padding: 24px 30px;
+    background: color-mix(in oklab, var(--ink) 4%, var(--bone));
+    border: 1px solid var(--rule);
+    color: inherit;
+    text-decoration: none;
+    transition: background .15s;
+  }
+  a.method-link:hover { background: color-mix(in oklab, var(--ink) 7%, var(--bone)); }
+  a.method-link:hover .method-title em { color: var(--accent); }
+  a.method-link .method-toggle::after {
+    content: "→";
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent);
+    transition: transform .2s;
+    line-height: 1;
+  }
+  a.method-link:hover .method-toggle::after { transform: translateX(3px); }
+  @media (max-width: 880px) {
+    a.method-link { padding: 18px 20px; gap: 12px; }
+  }
   .method-h {
     font-family: var(--mono);
     font-size: 10.5px;
@@ -846,6 +875,16 @@
               what management would actually open every morning. They still do.
             </p>
 
+            <a class="method-link" href="dashboard-writeup.html">
+              <div>
+                <div class="method-h">Method &middot; Decoupled-formula dashboard architecture, 2025</div>
+                <h3 class="method-title">Built for the <em>mailshop</em>. Asked for everywhere else.</h3>
+              </div>
+              <span class="method-toggle">
+                <span>Read the writeup</span>
+              </span>
+            </a>
+
             <div class="pull">
               By September, an outside consultant (Advatix) asked me to extend
               the analytics across two states — working in lieu of contracted
@@ -1152,7 +1191,11 @@
           <div class="contact-info">
             <div class="row">
               <span class="k">Email</span>
-              <a class="link" href="mailto:normbrooks-systems@gmail.com">normbrooks-systems@gmail.com</a>
+              <a class="link" href="/cdn-cgi/l/email-protection#214f4e534c43534e4e4a520c52585255444c5261464c40484d0f424e4c"><span class="__cf_email__" data-cfemail="89e7e6fbe4ebfbe6e6e2faa4faf0fafdece4fac9eee4e8e0e5a7eae6e4">[email&#160;protected]</span></a>
+            </div>
+            <div class="row">
+              <span class="k">Phone</span>
+              <a class="link" href="tel:+14344449181">(434) 444-9181</a>
             </div>
             <div class="row">
               <span class="k">Site</span>
@@ -1182,5 +1225,5 @@
   </div>
 </footer>
 
-</body>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Built for the mailshop. Asked for everywhere else. — Norm Brooks</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="post.css" />
+
+<style>
+  /* Numbered method list — page-native version of the index.html .method block. */
+  .method-list {
+    counter-reset: m;
+    list-style: none;
+    margin: 32px 0 12px;
+    padding: 28px 30px 30px;
+    background: var(--soft);
+    border: 1px solid var(--rule);
+    display: grid; gap: 26px;
+  }
+  .method-list li {
+    counter-increment: m;
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 18px;
+    align-items: baseline;
+  }
+  .method-list li::before {
+    content: counter(m, decimal-leading-zero);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .08em;
+    color: var(--accent);
+    padding-top: 2px;
+    border-top: 1px solid var(--accent);
+    align-self: start;
+    width: 38px;
+  }
+  .method-list h4 {
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 16px;
+    margin: 0 0 6px;
+    letter-spacing: -0.005em;
+  }
+  .method-list p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: color-mix(in oklab, var(--ink) 82%, var(--bone));
+    margin: 0;
+    max-width: 60ch;
+  }
+  .method-head {
+    margin: 8px 0 0;
+  }
+  .method-head .method-h {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .method-head h3 {
+    margin: 0;
+  }
+  @media (max-width: 740px) {
+    .method-list { padding: 20px; }
+    .method-list li { grid-template-columns: 36px 1fr; gap: 12px; }
+    .method-list li::before { width: 26px; }
+  }
+
+  /* Image placeholder used until real screenshots drop into /img */
+  .fig .placeholder {
+    aspect-ratio: 16 / 10;
+    width: 100%;
+    border: 1px solid var(--rule);
+    background:
+      repeating-linear-gradient(
+        135deg,
+        color-mix(in oklab, var(--ink) 4%, var(--bone)) 0 14px,
+        color-mix(in oklab, var(--ink) 7%, var(--bone)) 14px 28px
+      );
+    display: grid; place-items: center;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 24px;
+  }
+  .fig .placeholder span {
+    background: var(--bone);
+    border: 1px solid var(--rule);
+    padding: 8px 14px;
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-mark">Norm <em>Brooks</em></a>
+    <a href="index.html#work" class="back">Back to portfolio</a>
+  </div>
+</nav>
+
+<main>
+  <header class="head">
+    <div class="head-tag">
+      <div class="eyebrow">Selected work &middot; Innovairre Communications</div>
+    </div>
+    <h1>Built for the <em>mailshop</em>. Asked for everywhere else.</h1>
+    <p class="lede">
+      A spreadsheet dashboard that started as a two-week build for one
+      department and ended up running on cycling floor displays for seven
+      deployments across two state facilities. The skeleton never changed.
+      Everything underneath it did — by design.
+    </p>
+    <dl class="meta">
+      <div><dt>Built</dt><dd>January 2025</dd></div>
+      <div><dt>Sector</dt><dd>High-volume direct mail</dd></div>
+      <div><dt>Stack</dt><dd>Google Sheets · Decoupled formula architecture · Apps Script · Web-published cycling displays</dd></div>
+      <div><dt>Tenure</dt><dd>January 2025 — February 2026</dd></div>
+      <div><dt>Deployments</dt><dd>7 departments · 2 state facilities</dd></div>
+      <div><dt>Audience</dt><dd>500–600 operators/day · executives in two states</dd></div>
+    </dl>
+  </header>
+
+  <article class="prose">
+
+    <section>
+      <p class="emph">
+        The mailshop needed a dashboard. That was the brief.
+      </p>
+      <p>
+        The first version went up in two weeks. Within a month it had been
+        redeployed across the rest of the Virginia facility — affixing,
+        bindery, pressroom — and within nine months it had crossed state
+        lines to a second facility in Iowa, brought there by an outside
+        consultant in lieu of contracted external labor. Seven deployments
+        across two facilities, watched on cycling floor displays by 500 to
+        600 people a day, opened every morning by executives in two states.
+      </p>
+      <p>
+        The skeleton — the dashboard layout and its control sheet —
+        survived every redeployment unchanged. Everything else was rewritten
+        in service of one principle: the formula lives in one place, the
+        data lives somewhere else, and changing one never requires touching
+        the other.
+      </p>
+
+      <figure class="fig">
+        <img src="img/dashboard.png" alt="First Shift Production Floor Digest — current-shift hourly cells per operator with five-tier color bands, a rolling five-previous-shifts band, and a right-hand shift production goals / weekend forecast panel" loading="lazy" />
+        <figcaption>1st Shift Production Floor Digest — current-shift hourly cells per operator, rolling five-shift comparison, and the goal-pacing panel on the right. The five-tier legend (red &lt;70, yellow 70–79, green 80–94, blue 95–109, purple &gt;110) sits in the bottom-right.</figcaption>
+      </figure>
+    </section>
+
+    <section>
+      <h2>The brief was <em>one screen</em>. The problem was every screen after it.</h2>
+      <p>
+        The first version went up in two weeks. It worked. It also taught me,
+        immediately, that "a dashboard for the mailshop" was the wrong problem
+        statement — because within the month I was being asked for the same
+        thing for affixing, then bindery, then pressroom. Four departments at
+        one Virginia facility by the time the initial buildout was done. By
+        September the same architecture had been asked to cross to Iowa:
+        another mailroom, another bindery, another pressroom. Seven
+        deployments across two facilities.
+      </p>
+      <p>
+        The dashboard people <i>saw</i> was the same dashboard every time. The
+        dashboard underneath it could not be, because every department had
+        different machines, different operator counts, different shifts,
+        different goals, and different definitions of what a "good hour"
+        looked like.
+      </p>
+      <div class="pull">
+        The largest variant ran two shifts of thirty operators each across
+        seven dash screens cycling in rotation. The mailshop variant runs
+        two shifts at ten operators per shift and feeds a single primary
+        display. Same skeleton. Same control sheet. Completely different scale.
+      </div>
+    </section>
+
+    <section>
+      <div class="method-head">
+        <div class="method-h">Method &middot; Decoupled-formula dashboard architecture, 2025</div>
+        <h3>What the <em>spreadsheet</em> had to stop doing.</h3>
+      </div>
+
+      <ol class="method-list">
+        <li>
+          <div>
+            <h4>Notice what makes a spreadsheet unmaintainable.</h4>
+            <p>
+              The version that ran for two weeks did everything the right
+              dashboard does and nothing the right dashboard needs to keep
+              doing. Goals were hardcoded into the cells that displayed them.
+              Operator names were typed into the formulas that referenced
+              them. Shift boundaries lived in seventy different places. When
+              the first request came in to redeploy it for another department,
+              the honest accounting was that I'd be rebuilding it from
+              scratch, because every parameter I'd want to change was
+              scattered across the file in a way that no diff and no
+              find-and-replace could reach safely. That's the failure mode I
+              needed to design out before the second deployment, because I
+              could already see the third and fourth coming.
+            </p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h4>Separate the formulas from the data they act on.</h4>
+            <p>
+              The core architectural move: every dashboard cell became a
+              formula that resolves its inputs at runtime against a control
+              sheet. The display says <i>"Ichabod Crane, 9:00 slot, 106.5%"</i>
+              not because someone typed his name into the cell but because the
+              formula reads which operator is assigned to that machine, that
+              shift, that day, and pulls the corresponding count from the
+              production digest. Change the assignment on the control sheet
+              and the display updates. Change the goal — same. Change the
+              shift boundaries — same. Seventy cells stayed in sync because
+              none of them held the parameter being changed; they all looked
+              it up.
+            </p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h4>Build the parameters into a single named structure.</h4>
+            <p>
+              <code>Dash Control</code> (the sheet labeled DC) became the one
+              place where shift starts, shift ends, operator rosters, goal
+              values, machine assignments, and date references live. The
+              dashboard reads DC. The production digests read DC. The daily
+              sheets read DC. When a new department comes online, DC gets a
+              new column set, the dashboard formulas don't change at all,
+              and the variant deploys in hours rather than weeks. The work
+              of redeployment moved from rewriting formulas to populating a
+              config sheet — which is the same difference, in spreadsheet
+              terms, between editing source code and editing an environment
+              file.
+            </p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h4>Let the visual layer carry the <i>human</i> signal.</h4>
+            <p>
+              Operations told me to color the percentage cells red below 70,
+              green between 70 and 90, and blue above 90. I compressed the
+              bands, added yellow at the 70–79 transition, and added a fifth
+              tier in purple above 110. The purple band was the design choice
+              that mattered most and the one that wasn't asked for. When I
+              was supervising the night shift, I called the operators who
+              landed in purple "Royalty," and they kept showing up for it.
+              A dashboard that only flags failure produces a workforce that
+              only watches for failure. A dashboard with a tier that says
+              <i>you did something rare</i> produces a workforce that watches
+              for the rare thing. The conditional formatting cost nothing to
+              add. The behavior change wasn't free, but it wasn't billed to
+              the spreadsheet.
+            </p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h4>The cascade matters more than the dashboard.</h4>
+            <p>
+              By February 2025, the night shift was holding a 20% production
+              uplift over the baseline I inherited in October. Other things
+              drove the climb — staffing decisions, scheduling, the way the
+              shift was run. The dashboard's contribution was that it gave
+              the climb something to hold onto. Operators saw their own
+              numbers in close to real time. Supervisors saw which machines
+              were trailing the goal before the shift was lost. Executives
+              in two states had the same view I did at three in the morning.
+              The number held for nine months. The week after I left
+              supervision, it stopped holding — which is the honest reading
+              of how much of the lift was the spreadsheet and how much was
+              the person running the shift. The spreadsheet was the floor
+              under the number. It was not the engine.
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>What <em>did</em> the daily sheets look like underneath.</h2>
+      <p>
+        A daily sheet — there are two per day, one per shift, sixty-five and
+        counting in this variant alone — is the data layer the dashboard
+        reads. Each one is a structured grid of operator assignments,
+        machine-class breakdowns, two-hour production windows, and a rolling
+        five-shift comparison band. The daily sheet doesn't compute anything
+        that matters to the dashboard; it stores the inputs that the
+        dashboard's formulas resolve against. New day, new sheet, populated
+        from a template. The template is the only place the structure is
+        defined, and the structure hasn't changed across any of the seven
+        deployments.
+      </p>
+
+      <figure class="fig">
+        <img src="img/entry-sheet.png" alt="Daily data-entry pane — per-machine rows with operator assignments, setup/downtime minutes, target and actual rates, two-hour production windows, pace columns, and a comments column on the right" loading="lazy" />
+        <figcaption>One shift, one sheet. Per-machine rows carry operator assignments, setup/DT minutes, target vs. actual rates, two-hour production windows, and pace against the per-machine goal. The pane on the right is comments — where supervisors annotate <i>why</i> a number is what it is.</figcaption>
+      </figure>
+
+      <p>A few details worth naming, because they're the kind of thing that's easy to skip past:</p>
+
+      <ul class="failures">
+        <li>
+          <b>Color-coded percentage bands</b> — five tiers, applied via
+          conditional formatting against the per-hour goal. The bands are
+          visible at floor distance from the display screen, which is the
+          only test for whether a floor dashboard is doing its job.
+        </li>
+        <li>
+          <b>Rolling five-shift comparison</b> — every operator's last five
+          shifts sit next to their current one, color-coded the same way.
+          The dashboard doesn't just tell you how today is going; it tells
+          you whether today is consistent with this person's last week or
+          whether something is different. Different is the signal worth
+          investigating.
+        </li>
+        <li>
+          <b>Goal-pacing display</b> — the right-hand panel tracks actual
+          against goal at each two-hour checkpoint, with a final-count
+          projection and an hourly average. The hourly average is the
+          number supervisors check first, because it normalizes against
+          partial shifts.
+        </li>
+        <li>
+          <b>"Not Currently Operating" states</b> — the dashboard handles
+          absence and rotation gracefully because the daily sheet, not the
+          dashboard, decides who's assigned where. If a slot is empty on
+          the control sheet, the dashboard renders "Not Currently Operating"
+          instead of a missing reference, and the conditional formatting
+          doesn't fire on the blank cells.
+        </li>
+        <li>
+          <b>Weekend forecast</b> — a small panel on the right shows whether
+          Saturday and Sunday are scheduled to run, with the caveat that the
+          schedule isn't set until Wednesday afternoon. That panel exists
+          because operators asked. The dashboard was the place they were
+          already looking; it became the place that information lived.
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="quiet">Provenance</h2>
+      <p class="closing">
+        The dashboard is still on the screen at Innovairre. Executives still
+        open it. Operators still see their numbers on it.
+      </p>
+    </section>
+
+  </article>
+
+  <footer class="post-foot">
+    <a href="index.html#work" class="back">Back to portfolio</a>
+  </footer>
+</main>
+
+</body>
+</html>
