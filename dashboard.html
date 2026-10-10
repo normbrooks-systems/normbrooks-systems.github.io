@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Production Dashboard — Norm Brooks</title>
+<meta name="description" content="Case study: from a two-week Google Sheets dashboard to a lightweight, configurable production-management system.">
+<meta property="og:title" content="Production Dashboard — Norm Brooks">
+<meta property="og:description" content="Case study: from a two-week Google Sheets dashboard to a lightweight, configurable production-management system.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#18202B">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#18202B}
+a{color:#E8ECEF}a:hover{color:#F2A33A}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+a:focus-visible{outline:2px solid #F2A33A;outline-offset:3px}
+img{max-width:100%}
+</style>
+</head>
+<body>
+<div style="background: #18202B; color: #E8ECEF; font-family: 'Source Serif 4', Georgia, serif; min-width: 0">
+
+<header style="max-width: 1360px; margin: 0 auto; padding: 28px 40px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px">
+<a href="index.html" style="font-family: Archivo, 'Arial Narrow', sans-serif; font-stretch: 125%; font-weight: 800; font-size: 15px; letter-spacing: 0.14em; text-decoration: none">NORM BROOKS</a>
+<nav aria-label="Primary" style="display: flex; flex-wrap: wrap; gap: 28px; font-family: Archivo, sans-serif; font-size: 15px; font-weight: 500">
+<a href="index.html#work" style="text-decoration: none">Work</a>
+<a href="experience.html" style="text-decoration: none">Experience</a>
+<a href="index.html#contact" style="text-decoration: none">Contact</a>
+</nav>
+</header>
+
+<section style="max-width: 1360px; margin: 0 auto; padding: 96px 40px 80px; display: flex; flex-direction: column; gap: 28px; border-bottom: 1px solid #3A4757">
+<p style="margin: 0; font-family: Archivo, sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #F2A33A">Case study 01</p>
+<h1 style="margin: 0; font-family: Archivo, 'Arial Narrow', sans-serif; font-stretch: 125%; font-weight: 850; font-size: clamp(44px, 7vw, 104px); line-height: 0.94; letter-spacing: -0.02em; text-transform: uppercase; text-wrap: balance">Production Dashboard</h1>
+<p style="margin: 0; max-width: 900px; font-size: clamp(24px, 2.6vw, 34px); line-height: 1.35; font-style: italic; color: #D3DAE0">From a two-week dashboard to a lightweight production-management system</p>
+</section>
+
+<div style="max-width: 1360px; margin: 0 auto; padding: 80px 40px 140px; display: flex; flex-wrap: wrap; gap: 56px 80px; align-items: flex-start">
+
+<nav aria-label="In this case study" style="flex: 1 1 240px; display: flex; flex-direction: column; gap: 12px; font-family: Archivo, sans-serif; font-size: 15px; line-height: 1.4">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #A9B4BF">In this case study</span>
+<a href="#underneath" style="text-decoration: none; color: #C3CCD5">The system underneath the screen</a>
+<a href="#configuration" style="text-decoration: none; color: #C3CCD5">Configuration instead of reconstruction</a>
+<a href="#planning" style="text-decoration: none; color: #C3CCD5">Planning the shift before measuring it</a>
+<a href="#people" style="text-decoration: none; color: #C3CCD5">Designing for the people using it</a>
+<a href="#cause" style="text-decoration: none; color: #C3CCD5">What the dashboard did — and did not — cause</a>
+<a href="#mes" style="text-decoration: none; color: #C3CCD5">Approaching MES-like functionality</a>
+<a href="#next" style="text-decoration: none; color: #C3CCD5">Where I was taking it next</a>
+<a href="#represents" style="text-decoration: none; color: #C3CCD5">What this project represents</a>
+</nav>
+
+<article style="flex: 999 1 560px; min-width: 0; max-width: 760px; display: flex; flex-direction: column; gap: 72px">
+
+<section style="display: flex; flex-direction: column; gap: 24px">
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">In January 2025, I was asked to build a production dashboard for one department at a high-volume direct-mail company. The immediate need was straightforward: operators and supervisors needed a faster way to see whether production was on pace, where time was being lost, and whether a weak number represented a bad interval or a broader pattern.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">I built the first version in Google Sheets in about two weeks.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">That solved the first problem and exposed the next one almost immediately. Other departments wanted the same visibility, but their operations were not identical. Machine lists changed. Operator counts changed. Shift structures changed. Targets changed. Even the meaning of a good production interval varied by department.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">A dashboard that had to be rebuilt every time would not scale. The project became less about a single screen and more about separating the visible interface from the operating assumptions underneath it.</p>
+</section>
+
+<section id="underneath" style="display: flex; flex-direction: column; gap: 24px">
+<h2 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 110%; font-weight: 700; font-size: 32px; line-height: 1.15">The system underneath the screen</h2>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">The visible dashboard was intentionally simple. Operators needed to be able to glance at a floor display and understand where they stood. Supervisors needed current production, pace against goal, and enough recent history to recognize when something had changed.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">Underneath that display, the workbook became a layered operational system.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">Daily shift sheets combined production inputs with calculated setup and downtime, working hours, actual pieces per hour, labor cost per piece, checkpoint performance, pace, and projected final output. A separate control layer held information that should not be hard-coded into the display: operator rosters, machine assignments, goals, shift parameters, and references to the active production sheets.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">The dashboard layer then resolved the current operating state from those structures rather than embedding names, machines, dates, and goals directly into dozens of display formulas.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">A separate operator-production view supported longer-term analysis by operator or machine over a selectable date range. It could summarize production percentage, hours, average performance, and uptime/downtime relationships while charting the selected history.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">A reconstructed example of the workbook contains 14 sheets and more than 30,000 formula cells. That number is not the point by itself. The important part was that the complexity was divided into layers with different jobs instead of being scattered through the user interface.</p>
+</section>
+
+<section id="configuration" style="display: flex; flex-direction: column; gap: 24px">
+<h2 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 110%; font-weight: 700; font-size: 32px; line-height: 1.15">Configuration instead of reconstruction</h2>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">The first version taught me what made the system difficult to maintain. If an operator name, goal, shift boundary, or machine assignment is embedded directly into the formula that displays it, every change becomes a search-and-repair exercise.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">I moved those variables into control structures and made the display resolve them from configuration.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">That changed redeployment from a formula-writing problem into a configuration problem. A department could have a different roster, machine set, goals, or shift structure without requiring the visible dashboard to be redesigned around those differences.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">The same basic architecture ultimately supported multiple deployments across facilities in Virginia and Iowa. The presentation could remain familiar while the operating model underneath it changed to match each department.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">That separation is the part of the project I value most. The dashboard did not become useful because it had complicated formulas. It became useful because the complexity was increasingly kept away from the people who only needed the result.</p>
+</section>
+
+<section id="planning" style="display: flex; flex-direction: column; gap: 24px">
+<h2 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 110%; font-weight: 700; font-size: 32px; line-height: 1.15">Planning the shift before measuring it</h2>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">As the system matured, I began building tools around the reporting layer rather than simply adding more information to the dashboard.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">One of those tools was the <strong style="font-weight: 600; color: #E8ECEF">Planner</strong>: a printable shift-planning sheet that let a supervisor assign operators to machines, reconfigure those assignments as staffing changed, and capture call-outs at a glance. It was designed around the existing two-hour capture window, so the same sheet could remain useful as a working document while the shift was being established.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">The Planner was not a separate dead-end document. Once the assignments were settled, a transfer function wrote the selected operator and machine assignments into the initial values of the appropriate daily production sheets.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">That meant the shift could be planned once and then used to initialize the reporting system instead of requiring the same assignments to be entered independently in multiple places.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">In December 2025, I traveled to the company's Iowa facility to help configure the Planner and related support sheets for that operation. By that point, the work had moved beyond a single departmental dashboard and into cross-facility production tooling.</p>
+</section>
+
+<section id="people" style="display: flex; flex-direction: column; gap: 24px">
+<h2 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 110%; font-weight: 700; font-size: 32px; line-height: 1.15">Designing for the people using it</h2>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">The visual layer mattered just as much as the calculations.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">The dashboard used performance bands that could be understood from floor distance. Operations originally wanted three colors. I expanded the scheme to five: red for serious underperformance, yellow as a transition band, green for solid performance, blue around target, and purple for unusually strong performance.</p>
+<figure style="margin: 8px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(120px, 100%), 1fr)); gap: 6px">
+<div style="display: flex; flex-direction: column; gap: 10px"><div style="height: 56px; background: #C93C3C"></div><span style="font-family: Archivo, sans-serif; font-size: 13px; line-height: 1.35; color: #C3CCD5">Red — serious underperformance</span></div>
+<div style="display: flex; flex-direction: column; gap: 10px"><div style="height: 56px; background: #E9C443"></div><span style="font-family: Archivo, sans-serif; font-size: 13px; line-height: 1.35; color: #C3CCD5">Yellow — transition</span></div>
+<div style="display: flex; flex-direction: column; gap: 10px"><div style="height: 56px; background: #3E9E58"></div><span style="font-family: Archivo, sans-serif; font-size: 13px; line-height: 1.35; color: #C3CCD5">Green — solid performance</span></div>
+<div style="display: flex; flex-direction: column; gap: 10px"><div style="height: 56px; background: #3A78D0"></div><span style="font-family: Archivo, sans-serif; font-size: 13px; line-height: 1.35; color: #C3CCD5">Blue — around target</span></div>
+<div style="display: flex; flex-direction: column; gap: 10px"><div style="height: 56px; background: #8452C2"></div><span style="font-family: Archivo, sans-serif; font-size: 13px; line-height: 1.35; color: #C3CCD5">Purple — unusually strong</span></div>
+</figure>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">When I supervised the night shift, I called the purple band <strong style="font-weight: 600; color: #E8ECEF">Royalty</strong>.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">That was not a statistical innovation. It was a human one. A dashboard that only highlights failure trains people to look for failure. Giving exceptional performance its own visible state gave operators something positive to chase as well.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">The dashboard also showed recent history beside current performance. That made a low number more useful: a supervisor could see whether an operator was consistently struggling or whether today's result was unusual enough to investigate. The same principle applied to pace and projections. The goal was not to display every number we could calculate. It was to make deviations visible early enough to do something about them.</p>
+</section>
+
+<section id="cause" style="display: flex; flex-direction: column; gap: 24px">
+<h2 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 110%; font-weight: 700; font-size: 32px; line-height: 1.15">What the dashboard did — and did not — cause</h2>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">During my time supervising the night shift, average production rose and ultimately held at roughly 20% above the baseline I inherited.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">I do not attribute that result to a spreadsheet.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">Staffing decisions, scheduling, expectations, coaching, and day-to-day leadership all mattered. The dashboard's contribution was visibility. Operators could see their latest recorded production. Supervisors could see which machines were falling behind before the shift was over. Much of the data was entered manually, so the reporting reflected the latest entries rather than continuous automated capture. Historical comparisons made it easier to distinguish a recurring problem from a one-off event.</p>
+<p style="margin: 16px 0; font-size: clamp(28px, 3vw, 38px); line-height: 1.3; font-style: italic; color: #E8ECEF; text-wrap: balance">The spreadsheet was the floor under the number. It was not the engine.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">That distinction matters because operational tools are easy to oversell. A dashboard cannot manage a department. It can make the state of the department harder to misunderstand.</p>
+</section>
+
+<section id="mes" style="display: flex; flex-direction: column; gap: 24px">
+<h2 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 110%; font-weight: 700; font-size: 32px; line-height: 1.15">Approaching MES-like functionality</h2>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">By late 2025, calling the project only a dashboard no longer described its full scope.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">The system could support shift planning, attendance/call-out visibility, machine and operator assignments, initialization of daily production records, production capture, setup and downtime tracking, pace and projections, historical operator and machine analysis, and floor reporting based on the latest entered data. In the version I developed for my own supervisory use, I also automated portions of recurring forms and employee-related administrative work.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">It was not a formal Manufacturing Execution System (MES), and I do not present it as one. But its direction was increasingly MES-adjacent: plan the work, initialize the shift, capture what happened, make the current state visible, preserve history, and reduce repetitive administrative steps around the process.</p>
+</section>
+
+<section id="next" style="display: flex; flex-direction: column; gap: 24px">
+<h2 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 110%; font-weight: 700; font-size: 32px; line-height: 1.15">Where I was taking it next</h2>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">The remaining limitation was that much of the production data still depended on people entering it.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">I built a Raspberry Pi 4-based production-counter prototype and continued developing a machine-side concept that could combine automated counts with operator and job information. The intent was to collect production information closer to the machine, preserve it in the Sheets-based operating layer, and ultimately make that information available to existing enterprise workflows without requiring every production event to begin at a shared workstation.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">I was also simplifying parts of the original spreadsheet architecture as I went. The first dashboard had relied heavily on indirect references and other formula techniques because Sheets was the tool available and the system had grown quickly. Later development moved toward fewer, cleaner lookup paths and more automated data collection.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">Development continued into my final weeks with the company, but the automated capture and integration work did not reach production deployment. I present those pieces as development work rather than finished implementations.</p>
+</section>
+
+<section id="represents" style="display: flex; flex-direction: column; gap: 24px">
+<h2 style="margin: 0; font-family: Archivo, sans-serif; font-stretch: 110%; font-weight: 700; font-size: 32px; line-height: 1.15">What this project represents</h2>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">The project started as a request for a screen.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">What it became was a configurable production-management system built inside tools the organization already used. It combined planning, production calculations, configuration, current-state reporting, historical analysis, administrative automation, and a visual language designed for the people actually doing the work.</p>
+<p style="margin: 0; font-size: 20px; line-height: 1.7; color: #D3DAE0">The implementation matters, but the broader lesson has followed me into other projects: the best system is not the one with the most sophisticated architecture on paper. It is the one that captures the right information, makes the important state obvious, reduces unnecessary human work, and can survive the next change without forcing everyone to start over.</p>
+</section>
+
+</article>
+</div>
+
+<footer style="background: #111821; padding: 96px 40px 48px">
+<div style="max-width: 1360px; margin: 0 auto; display: flex; flex-direction: column; gap: 72px">
+<a href="flowmaster.html" style="display: flex; flex-direction: column; gap: 16px; text-decoration: none">
+<span style="font-family: Archivo, sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #F2A33A">Next case study</span>
+<span style="font-family: Archivo, sans-serif; font-stretch: 125%; font-weight: 850; font-size: clamp(36px, 5.5vw, 80px); line-height: 0.95; text-transform: uppercase">FlowMaster Process Optimization →</span>
+</a>
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; padding-top: 28px; border-top: 1px solid #3A4757; font-family: Archivo, sans-serif; font-size: 15px; color: #A9B4BF">
+<a href="index.html" style="color: #E8ECEF">← Back to all work</a>
+<a href="mailto:normbrooks-systems@gmail.com" style="color: #E8ECEF">normbrooks-systems@gmail.com</a>
+</div>
+</div>
+</footer>
+
+</div>
+</body>
+</html>

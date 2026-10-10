@@ -1,10 +1,32 @@
-# Portfolio
-A professional portfolio, showcasing my work.
+# Norm Brooks — portfolio site
 
-## License
+Static site for GitHub Pages: plain HTML, no build step.
 
-The content of this site (writing, articles, blog posts) is licensed under 
-[Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International](https://creativecommons.org/licenses/by-nc-nd/4.0/).
+## Files
 
-You may share and reference this work with attribution, but may not modify 
-it or use it commercially without permission.
+| File | Page |
+| --- | --- |
+| `index.html` | Homepage |
+| `dashboard.html` | Case study 01: Production Dashboard |
+| `flowmaster.html` | Case study 02: FlowMaster Process Optimization |
+| `reslot.html` | Case study 03: Class 15 Reslot |
+| `inventory.html` | Case study 04: Inventory Control & Root-Cause Analysis |
+| `experience.html` | Experience in Context |
+| `js/hero.js` | Homepage scroll effect (car-to-valley crossfade, tagline, pier) |
+| `images/` | Photographs, metadata stripped |
+| `.nojekyll` | Tells GitHub Pages to serve the files as-is |
+
+## Publishing on GitHub Pages
+
+1. Create a new public repository on GitHub (for example `norm-brooks-site`, or `<your-username>.github.io` to serve it at that address).
+2. Upload everything in this folder to the root of the repository, including the hidden `.nojekyll` file, the `images` folder and the `js` folder.
+3. In the repository, open Settings → Pages. Under "Build and deployment," choose "Deploy from a branch," select `main` and `/ (root)`, and save.
+4. After a minute or two, the site address appears at the top of that Pages settings screen.
+
+To use a custom domain, enter it in the same Pages settings screen and follow GitHub's DNS instructions.
+
+## Notes
+
+- Visitors who have reduced motion turned on, or whose browser blocks JavaScript, see the settled hero (valley photo and tagline) without the scroll animation.
+- Fonts load from Google Fonts (Archivo, Source Serif 4).
+- The direct-mail employer is intentionally not named anywhere on the site, including file names and metadata.
